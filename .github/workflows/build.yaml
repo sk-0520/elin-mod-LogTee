@@ -1,0 +1,174 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  json:
+    name: "<Validation> Json"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Mod
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: latest
+
+      - name: Localization.json
+        run: |
+          set -e
+          npx ajv-cli@5 validate -s dev-items/Localization.schema.json -d Localization.json --all-errors
+
+      - name: Plugin.json
+        run: |
+          set -e
+          npx ajv-cli@5 validate -s dev-items/Plugin.schema.json -d Plugin.json --all-errors
+
+  xhtml:
+    name: "<Validation> XHTML"
+    # なんちゃって XML 検証
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Mod
+        uses: actions/checkout@v6
+
+      - name: Setup xmllint
+        if: ${{ hashFiles('Elin.Plugin.Main/@Assets/ModHelp/help.xhtml') != '' }}
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+
+      - name: help.xhtml
+        if: ${{ hashFiles('Elin.Plugin.Main/@Assets/ModHelp/help.xhtml') != '' }}
+        shell: bash
+        # 細かいのはあきらめー
+        run: |
+          xmllint Elin.Plugin.Main/@Assets/ModHelp/help.xhtml
+
+  markdown:
+    name: "<Validation> Markdown"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Mod
+        uses: actions/checkout@v6
+
+      - name: "*.md"
+        if: ${{ hashFiles('**/*.md') != '' }}
+        uses: DavidAnson/markdownlint-cli2-action@v23
+        with:
+          globs: '**/*.md'
+          config: .markdownlint.json
+
+  build:
+    name: "<Build> Mod"
+
+    needs: &dependence-jobs
+      - json
+      - xhtml
+      - markdown
+
+    runs-on: &mod-os-image windows-latest
+
+    strategy:
+      matrix:
+        configuration: &matrix-configurations
+          - Debug
+          - Release
+
+    steps:
+      - name: Checkout Mod
+        uses: actions/checkout@v6
+
+      - name: Checkout CI Module
+        uses: actions/checkout@v6
+        with: &checkout-ci-module
+            repository: sk-0520/elin-mod-ci-infrastructure
+            path: elin-mod-ci-infrastructure
+
+      - name: Setup CI Module
+        shell: pwsh
+        run: &setup-ci-module |
+          # .Assembly.xml
+          $asmPath = "Elin.Plugin.Main.Assembly.xml"
+          $asmXml = [xml](Get-Content -Path $asmPath -Encoding UTF8)
+
+          if($asmXml.Project.PropertyGroup.AssemblyName -eq "********") {
+            $asmXml.Project.PropertyGroup.AssemblyName = "Elin.Mod.Dev.Sample"
+          }
+
+          $asmXml.Save($asmPath)
+
+          # .targets
+          $targetsPath = "Directory.Build.targets"
+          $targetsXml = [xml](Get-Content -Path $targetsPath -Encoding UTF8)
+
+          $propertyGroup = $targetsXml.CreateElement("PropertyGroup")
+          $steamPathGroup = $targetsXml.CreateElement("SteamPath")
+          $steamPathGroup.InnerText = "${{ github.workspace }}"
+          $elinPathGroup = $targetsXml.CreateElement("ElinPath")
+          $elinPathGroup.InnerText = '$(SteamPath)\elin-mod-ci-infrastructure\libs'
+          $modPathGroup = $targetsXml.CreateElement("ModPath")
+          $modPathGroup.InnerText = "${{ github.workspace }}\output"
+
+          $propertyGroup.AppendChild($steamPathGroup)
+          $propertyGroup.AppendChild($elinPathGroup)
+          $propertyGroup.AppendChild($modPathGroup)
+
+          $targetsXml.Project.AppendChild($propertyGroup)
+
+          $targetsXml.Save($targetsPath)
+
+          Get-Content -Path $asmPath -Encoding UTF8
+          Get-Content -Path $targetsPath -Encoding UTF8
+
+      - name: Build
+        shell: pwsh
+        run: |
+          dotnet build --configuration ${{ matrix.configuration }}
+
+      - name: Artifact
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact
+          path: output
+
+  test:
+    name: "<Test> Mod"
+
+    needs: *dependence-jobs
+
+    runs-on: *mod-os-image
+
+    strategy:
+      matrix:
+        configuration: *matrix-configurations
+
+    steps:
+      - name: Checkout Mod
+        uses: actions/checkout@v6
+
+      - name: Checkout CI Module
+        uses: actions/checkout@v6
+        with: *checkout-ci-module
+
+      - name: Setup CI Module
+        shell: pwsh
+        run: *setup-ci-module
+
+      - name: Test
+        shell: pwsh
+        run: |
+          dotnet test --configuration ${{ matrix.configuration }}
+

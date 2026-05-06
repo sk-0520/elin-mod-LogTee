@@ -1,0 +1,91 @@
+<Project>
+
+	<PropertyGroup>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<WarningLevel>9999</WarningLevel>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<Nullable>enable</Nullable>
+		<Deterministic>True</Deterministic>
+
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<PredefinedCulturesOnly>false</PredefinedCulturesOnly>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<AnalysisMode>All</AnalysisMode>
+
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' ">
+		<Optimize>true</Optimize>
+		<DebugType>none</DebugType>
+		<PathMap>$(SolutionDir)=.</PathMap>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<ReferencePrivate>False</ReferencePrivate>
+	</PropertyGroup>
+	<PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Test'))">
+		<ReferencePrivate>True</ReferencePrivate>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(MSBuildProjectName)' == 'Elin.Plugin.Generator.Test'">
+		<Reference Include="$(ElinPath)\BepInEx\core\*.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup Condition="!$(MSBuildProjectName.Contains('.Generator'))">
+		<Reference Include="$(ElinPath)\BepInEx\core\*.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+		<Reference Include="$(ElinPath)\Elin_Data\Managed\NPOI.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+		<Reference Include="$(ElinPath)\Elin_Data\Managed\UnityEngine*.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+		<Reference Include="$(ElinPath)\Elin_Data\Managed\Elin.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+		<Reference Include="$(ElinPath)\Elin_Data\Managed\Plugins*.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+		<Reference Include="$(ElinPath)\Elin_Data\Managed\UniTask*.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+		<Reference Include="$(ElinPath)\Elin_Data\Managed\Newtonsoft.Json.dll">
+			<Private>$(ReferencePrivate)</Private>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Test'))">
+		<Using Include="Xunit" />
+
+		<PackageReference Include="coverlet.collector">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="NSubstitute" />
+		<PackageReference Include="NSubstitute.Analyzers.CSharp">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+</Project>
