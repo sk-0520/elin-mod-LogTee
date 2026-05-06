@@ -1,0 +1,27 @@
+{
+  "name": "elin-mod-LogTee",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "type": "tsc --noEmit",
+    "build": "rspack build --mode production",
+    "lint": "biome check",
+    "dev": "rspack dev --mode development",
+    "format": "biome check --write",
+    "format-force": "biome check --write --unsafe",
+    "preview": "rspack preview"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.13",
+    "@rspack/cli": "^2.0.3",
+    "@rspack/core": "^2.0.3",
+    "@rspack/dev-server": "^2.0.1",
+    "@types/node": "^25.8.0",
+    "dotenv-webpack": "^9.0.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  }
+}

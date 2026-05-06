@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>elin-mod-LogTee</title>
+</head>
+
+<body>
+    <div class="toolbar">
+        <h1 class="toolbar-group">elin-mod-LogTee</h1>
+
+        <fieldset class="toolbar-group">
+            <legend data-lang="status.title">[STATUS]</legend>
+            <span id="status">[STATUS]</span>
+        </fieldset>
+        <fieldset class="toolbar-group">
+            <legend data-lang="stream.title">[STREAM]</legend>
+            <button id="stream-socket" type="button" data-lang="stream.socket">[SOCKET]</button>
+            <button id="stream-file" type="button" data-lang="stream.file">[FILE]</button>
+        </fieldset>
+         <fieldset class="toolbar-group">
+            <legend data-lang="log-file.title">[LOG FILE]</legend>
+            <input id="log-upload" type="file" />
+        </fieldset>
+         <fieldset class="toolbar-group">
+            <legend data-lang="action.title">[ACTION]</legend>
+            <button id="action-clear" type="button" data-lang="action.clear">[CLEAR]</button>
+            <button id="action-stream-stop" type="button" data-lang="action.stream-stop">[STOP]</button>
+        </fieldset>
+        </div>
+
+    <div class="log-container">
+        <div id="log" class="log"></div>
+    </div>
+
+    <template id="log-item-template">
+        <span class="log-item">
+        </span>
+    </template>
+
+    <template id="mod-message-template">
+        <details class="mod-message">
+            <summary class="mod-message-message">[MESSAGE]</summary>
+            <pre class="mod-message-detail">[DETAIL]</pre>
+        </details>
+    </template>
+</body>
+
+</html>

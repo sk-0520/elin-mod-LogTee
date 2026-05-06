@@ -3,6 +3,7 @@ namespace Elin.Plugin.Main.PluginHelpers
     /// <summary>
     /// Elin のゲーム内での便利関数をまとめるクラス。
     /// </summary>
+    /// <remarks>Mod 用テンプレート組み込み想定。</remarks>
     public class ElinHelper
     {
         #region function

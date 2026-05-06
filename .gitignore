@@ -55,3 +55,7 @@ TestResults/
 *.lnk
 git-shell.bat
 
+# この Mod はワケわからん処理がてんこ盛り
+node_modules
+/*/@Assets/wwwroot
+wwwroot/.env.development

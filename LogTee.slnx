@@ -7,8 +7,11 @@
     <File Path="README.md" />
   </Folder>
   <Folder Name="/Mod.Template/">
+    <Project Path="Elin.Plugin.Generator.Test/Elin.Plugin.Generator.Test.csproj" />
     <Project Path="Elin.Plugin.Generator/Elin.Plugin.Generator.csproj" />
   </Folder>
-  <Project Path="Elin.Plugin.Main.Test/Elin.Plugin.Main.Test.csproj" />
-  <Project Path="Elin.Plugin.Main/Elin.Plugin.Main.csproj" DefaultStartup="true" />
+  <Folder Name="/Plugin/">
+    <Project Path="Elin.Plugin.Main.Test/Elin.Plugin.Main.Test.csproj" />
+    <Project Path="Elin.Plugin.Main/Elin.Plugin.Main.csproj" />
+  </Folder>
 </Solution>

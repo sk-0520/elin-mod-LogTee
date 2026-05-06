@@ -1,0 +1,66 @@
+﻿html {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-size: 12pt;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+
+  /* TODO: 多言語におけるフォント指定を知らない */
+  font-family: /* "Meiryo UI",
+    "PingFang TC", "Microsoft JhengHei",
+    "PingFang SC", "Microsoft YaHei", */
+    sans-serif;
+}
+
+.toolbar {
+  display: flex;
+  gap: 1em;
+
+  .toolbar-group {
+    padding: 0.5em;
+  }
+
+  h1.toolbar-group {
+    font-size: 1em;
+  }
+}
+
+.log-container {
+  background: #000;
+  flex: 1 1 100%;
+  overflow: scroll;
+  padding: 1em;
+
+  .log {
+    overflow: hidden;
+
+    .mod-message {
+      border: 1px solid #fff;
+    }
+
+    .mod-message-notice {
+      color: #0f0;
+    }
+
+    .mod-message-information {
+      color: #0ff;
+    }
+
+    .mod-message-warning {
+      color: #ff0;
+    }
+
+    .mod-message-error {
+      color: #f00;
+    }
+
+    .log-item {
+      margin-right: 0.25ch;
+    }
+  }
+}

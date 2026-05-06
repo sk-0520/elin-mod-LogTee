@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -16,11 +16,6 @@ namespace Elin.Plugin.Main.PluginHelpers
         public FileLogger(string path)
         {
             Path = path;
-        }
-
-        ~FileLogger()
-        {
-            Dispose(disposing: false);
         }
 
         #region property
@@ -95,6 +90,11 @@ namespace Elin.Plugin.Main.PluginHelpers
 
                 this._disposedValue = true;
             }
+        }
+
+        ~FileLogger()
+        {
+            Dispose(disposing: false);
         }
 
         public void Dispose()

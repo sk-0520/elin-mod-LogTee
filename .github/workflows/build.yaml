@@ -132,6 +132,20 @@ jobs:
           Get-Content -Path $asmPath -Encoding UTF8
           Get-Content -Path $targetsPath -Encoding UTF8
 
+      - name: <Nodejs> Setup
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ./.node-version
+          cache: npm
+
+      - name: <Nodejs> NPM install
+        shell: bash
+        run: npm ci --ignore-scripts
+
+      - name: <Nodejs> Build
+        shell: bash
+        run: npm run build
+
       - name: Build
         shell: pwsh
         run: |

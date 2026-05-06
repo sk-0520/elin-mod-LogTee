@@ -1,21 +1,42 @@
 {
   "$schema": "./dev-items/Plugin.schema.json",
   "package": {
-    "title": "elin | tee",
-    "id": "sk.tee",
-    "author": "作者",
+    "title": "elin.log | tee",
+    "id": "sk.logtee",
+    "author": "sk",
     "loadPriority": 100,
     "elinVersion": "0.23.295",
     "description": [
-      "説明1行目",
-      "説明2行目"
+      "[JP]",
+      "ゲーム内メッセージのログを出力します",
+      "設定は [config] を参照してください",
+      "設定を変更した場合、Elin を再起動する必要があります",
+      "",
+      "[EN]",
+      "Outputs logs of in-game messages",
+      "Please refer to [config] for configuration",
+      "If you change the configuration, you need to restart Elin",
+      "",
+      "[CN]",
+      "输出游戏内消息的日志",
+      "请参阅 [config] 进行配置",
+      "如果更改了配置，则需要重新启动 Elin",
+      "",
+      "---",
+      "色々処理が甘い + 不完全 ですがとりあえず公開してバグ対応します。疲れた。",
+      "",
+      "[config]",
+      "Elin\\BepInEx\\config\\sk.logtee.cfg",
+      "---",
+      "https://github.com/sk-0520/elin-mod-LogTee"
     ],
     "tags": [
-      "General"
+      "General",
+      "QoL"
     ]
   },
   "mod": {
-    "version": "0.0.0",
+    "version": "1.0.0",
     "useDebugId": true,
     "log": "NUL"
   }

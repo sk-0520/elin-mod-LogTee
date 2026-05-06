@@ -1,0 +1,91 @@
+import { dump } from './access';
+import { getLogElement } from './dom';
+import type { Language } from './language';
+import { addLogItem, addModMessage, removeHeadElements } from './log';
+import { setStatus } from './status';
+import { LogItemScheme } from './types';
+
+// SSE で一生データを受信するとブラウザが死ぬので制限する
+// ファイルアップロードに関しては一回きりとして制限しない方針
+const SseLogElementLimit = 4 * 1024;
+
+export class EventSourceReceiver {
+  constructor(
+    private readonly endpoint: string,
+    private readonly target: 'socket' | 'file',
+    private readonly language: Language,
+  ) {
+    this.eventSource = new EventSource(endpoint);
+
+    this.eventSource.addEventListener('open', (ev) => this.onOpen(ev));
+    this.eventSource.addEventListener('error', (ev) => this.onError(ev));
+    this.eventSource.addEventListener('message', (ev) => this.onMessage(ev));
+  }
+
+  private eventSource: EventSource;
+
+  private onOpen(event: Event) {
+    addModMessage(
+      {
+        kind: 'Notice',
+        messageId: `mod.message.id.stream-client-open`,
+        details: {
+          target: this.target,
+          endpoint: this.endpoint,
+          error: dump(event),
+        },
+      },
+      this.language,
+    );
+  }
+
+  private onError(event: Event) {
+    console.error('EventSource error', event);
+    addModMessage(
+      {
+        kind: 'Error',
+        messageId: `mod.message.id.stream-server-error`,
+        details: {
+          target: this.target,
+          endpoint: this.endpoint,
+          error: dump(event),
+        },
+      },
+      this.language,
+    );
+    setStatus('none', this.language);
+  }
+
+  private onMessage(event: MessageEvent) {
+    this.doMessage(event.data);
+  }
+
+  private doMessage(data: string) {
+    console.debug('onMessage', data);
+    if (data) {
+      const json = JSON.parse(data);
+      const logItem = LogItemScheme.parse(json);
+
+      addLogItem(logItem, this.language);
+      removeHeadElements(getLogElement(), SseLogElementLimit);
+    }
+  }
+
+  public cleanup() {
+    if (this.eventSource) {
+      this.eventSource.removeEventListener('open', this.onOpen);
+      this.eventSource.removeEventListener('error', this.onError);
+      this.eventSource.removeEventListener('message', this.onMessage);
+      this.eventSource.close();
+      this.eventSource = undefined as unknown as EventSource;
+      addModMessage(
+        {
+          kind: 'Information',
+          messageId: `mod.message.id.stream-client-stop`,
+          details: { target: this.target, endpoint: this.endpoint },
+        },
+        this.language,
+      );
+    }
+  }
+}
