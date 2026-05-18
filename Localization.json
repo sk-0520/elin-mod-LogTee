@@ -30,6 +30,71 @@
     }
   },
   "config": {
+    "LogBufferSettingCapacity": {
+      "JP": "ログバッファの容量",
+      "EN": "Log buffer capacity",
+      "CN": "日志缓冲容量"
+    },
+    "LogBufferSettingLogFlushLimit": {
+      "JP": "ログバッファの出力制限",
+      "EN": "Log buffer output limit",
+      "CN": "日志缓冲输出限制"
+    },
+
+    "LogFileSettingIsEnabled": {
+      "JP": "ログファイル出力を有効にするか",
+      "EN": "Enable log file output",
+      "CN": "启用日志文件输出"
+    },
+    "LogFileSettingFilePath": {
+      "JP": "ログファイルのパス, 次の文字列を動的に設定: ${YYYY}, ${MM}, ${DD}",
+      "EN": "Log file path, dynamically set the following strings: ${YYYY}, ${MM}, ${DD}",
+      "CN": "日志文件路径, 动态设置以下字符串: ${YYYY}, ${MM}, ${DD}"
+    },
+
+    "SocketClientSettingIsEnabled": {
+      "JP": "ソケットクライアントを有効にするか",
+      "EN": "Enable socket client",
+      "CN": "启用Socket客户端"
+    },
+    "SocketClientSettingPort": {
+      "JP": "ソケットクライアントのポート",
+      "EN": "Socket client port",
+      "CN": "Socket客户端端口"
+    },
+
+    "SocketServerSettingIsEnabled": {
+      "JP": "ソケットサーバーを有効にするか",
+      "EN": "Enable socket server",
+      "CN": "启用Socket服务器"
+    },
+    "SocketServerSettingPort": {
+      "JP": "ソケットサーバーのポート",
+      "EN": "Socket server port",
+      "CN": "Socket服务器端口"
+    },
+    "SocketServerSettingCapacity": {
+      "JP": "ソケットサーバーの容量",
+      "EN": "Socket server capacity",
+      "CN": "Socket服务器容量"
+    },
+
+    "WebServerSettingIsEnabled": {
+      "JP": "Webサーバーを有効にするか",
+      "EN": "Enable web server",
+      "CN": "启用Web服务器"
+    },
+    "WebServerSettingPort": {
+      "JP": "Webサーバーのポート",
+      "EN": "Web server port",
+      "CN": "Web服务器端口"
+    },
+    "WebServerSettingOpenBrowserOnStartup": {
+      "JP": "起動時にブラウザを開くか",
+      "EN": "Open browser on startup",
+      "CN": "启动时打开浏览器"
+    },
+
     /* ModOptions 用に作ってたけど完成せず。名残として置いておく
     "CommonIsEnabled": {
       "JP": "有効",

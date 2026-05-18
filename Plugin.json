@@ -5,7 +5,7 @@
     "id": "sk.logtee",
     "author": "sk",
     "loadPriority": 100,
-    "elinVersion": "0.23.295",
+    "elinVersion": "0.23.307",
     "description": [
       "[JP]",
       "ゲーム内メッセージのログを出力します",
@@ -39,7 +39,7 @@
     ]
   },
   "mod": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "useDebugId": true,
     "log": "NUL"
   }

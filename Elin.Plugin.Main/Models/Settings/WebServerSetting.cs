@@ -1,3 +1,5 @@
+using Elin.Plugin.Generated;
+
 namespace Elin.Plugin.Main.Models.Settings
 {
     public partial interface IReadOnlyWebServerSetting
@@ -15,8 +17,13 @@ namespace Elin.Plugin.Main.Models.Settings
     {
         #region IReadOnlyWebServerSetting
 
+        [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.WebServerSettingIsEnabled), AllLanguage = true)]
         public virtual bool IsEnabled { get; set; }
+
+        [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.WebServerSettingPort), AllLanguage = true)]
         virtual public int Port { get; set; }
+
+        [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.WebServerSettingOpenBrowserOnStartup), AllLanguage = true)]
         virtual public bool OpenBrowserOnStartup { get; set; }
 
         #endregion
