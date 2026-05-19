@@ -41,6 +41,12 @@ namespace Elin.Plugin.Main.Models.Settings
             OpenBrowserOnStartup = true,
         };
 
+        public FrontendSetting Frontend { get; set; } = new FrontendSetting()
+        {
+            CssFontFamily = "sans-serif",
+            CssFontSize = "12pt",
+        };
+
         #endregion
     }
 }

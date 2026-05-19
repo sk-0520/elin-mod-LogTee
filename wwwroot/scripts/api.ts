@@ -3,6 +3,8 @@ import type { Language } from './language';
 import { EventSourceReceiver } from './sse';
 import {
   FileNotFoundResponseScheme,
+  type SettingResponse,
+  SettingResponseScheme,
   SimpleResultResponseScheme,
   type TailKnownNotFoundResponse,
   type TailKnownSuccessResponse,
@@ -12,6 +14,16 @@ import {
 
 // process.env で差し替えれそうなんだけど rspack で対応する方法未調査(粗方済んだら対応する)
 type ApiPath = `/api/${string}`;
+
+function throwIfNotStatus(response: Response, expectedStatus: number[]): void {
+  if (!expectedStatus.includes(response.status)) {
+    throw new Error(`Unexpected response status: ${response.status}`);
+  }
+}
+
+function throwIfNotOk(response: Response): void {
+  throwIfNotStatus(response, [200]);
+}
 
 function joinEndpoint(path: ApiPath): string {
   return `${Environment.baseEndpointUrl}${path}`;
@@ -29,6 +41,8 @@ export async function getTailApi(): Promise<TailUnknownResponse> {
       data: FileNotFoundResponseScheme.parse(json),
     } satisfies TailKnownNotFoundResponse;
   }
+
+  throwIfNotOk(response);
 
   const json = await response.json();
   const result = TailSuccessResponseScheme.parse(json);
@@ -52,6 +66,17 @@ export function getFileStream(language: Language): EventSourceReceiver {
     'file',
     language,
   );
+}
+
+export async function getSetting(): Promise<SettingResponse> {
+  const response = await fetch(joinEndpoint('/api/setting'));
+
+  throwIfNotOk(response);
+
+  const json = await response.json();
+
+  const result = SettingResponseScheme.parse(json);
+  return result;
 }
 
 export async function postSettingReset(): Promise<void> {

@@ -67,3 +67,12 @@ export function createModMessageElementByTemplate(): HTMLElement {
   const modMessageElement = clonedElement.firstElementChild as HTMLElement;
   return modMessageElement;
 }
+
+export async function busy<T>(promise: () => Promise<T>): Promise<T> {
+  try {
+    // DOM 構築
+    return await promise();
+  } finally {
+    // 構築 DOM 破棄
+  }
+}

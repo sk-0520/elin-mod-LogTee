@@ -27,7 +27,8 @@ namespace Elin.Plugin.Main.Models.Web.Runner
                 new Routing("GET", "/api/tail", TailAsync),
                 new Routing("GET", "/api/stream/file", StreamFileAsync),
                 new Routing("GET", "/api/stream/socket", StreamSocketAsync),
-                new Routing("GET", "/api/setting", SettingAsync),
+                new Routing("GET", "/api/setting", GetSettingAsync),
+                new Routing("POST", "/api/setting", PostSettingAsync),
                 new Routing("POST", "/api/setting/reset", ResetSettingAsync),
             };
         }
@@ -250,11 +251,33 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             }
         }
 
-        private async UniTask SettingAsync(System.Net.HttpListenerContext context, System.Threading.CancellationToken cancellationToken)
+        private async UniTask GetSettingAsync(System.Net.HttpListenerContext context, System.Threading.CancellationToken cancellationToken)
         {
             var response = new SettingResponse
             {
                 Setting = ModHelper.Plugin.SettingProxy,
+            };
+            await WriteResponseAsync(context, response, cancellationToken: cancellationToken);
+        }
+
+        private async UniTask PostSettingAsync(System.Net.HttpListenerContext context, System.Threading.CancellationToken cancellationToken)
+        {
+            string rawRequestBody;
+            using (var reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding))
+            {
+                rawRequestBody = await reader.ReadToEndAsync();
+            }
+            var request = JsonConvert.DeserializeObject<SettingRequest>(rawRequestBody, JsonSerializerSettings);
+
+            var reqSetting = request.Setting;
+
+            var settingProxy = ModHelper.Plugin.SettingProxy;
+
+            ObjectUtility.CopySetting(reqSetting, settingProxy);
+
+            var response = new SimpleResultResponse
+            {
+                Success = true,
             };
             await WriteResponseAsync(context, response, cancellationToken: cancellationToken);
         }
