@@ -63,7 +63,27 @@ const LanguageItems: { [key: string]: LanguageItem } = {
     jp: '停止',
     en: 'Stop',
   },
-
+  'setting.title': {
+    jp: '設定',
+    en: 'Setting',
+  },
+  'setting.edit': {
+    jp: '編集',
+    en: 'Edit',
+  },
+  'setting.reset': {
+    jp: 'リセット',
+    en: 'Reset',
+  },
+  'setting.reset.confirm': {
+    jp: 'リセットしますか？',
+    en: 'Are you sure you want to reset?',
+  },
+  'setting.reset.warning': {
+    jp: '設定反映には Elin の再起動が必要です',
+    en: 'Restarting Elin is required to apply the settings.',
+  },
+  //--------------------------------------------
   // ModMessageId
   'mod.message.id.unknown-error': {
     jp: '不明なエラー',

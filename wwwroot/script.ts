@@ -1,5 +1,10 @@
 import { dump, get } from './scripts/access';
-import { getFileStream, getSocketStream, getTailApi } from './scripts/api';
+import {
+  getFileStream,
+  getSocketStream,
+  getTailApi,
+  postSettingReset,
+} from './scripts/api';
 import { ensureElementById } from './scripts/dom';
 import { applyLanguages, getLanguage, type Language } from './scripts/language';
 import {
@@ -131,12 +136,36 @@ async function processUpload(
   }
 }
 
+function processSettingEdit(_language: Language) {}
+
+async function processSettingReset(language: Language) {
+  // confirm/alert が輝いている
+  const userResult = confirm(language['setting.reset.confirm']);
+  if (!userResult) {
+    return;
+  }
+
+  try {
+    await postSettingReset();
+    alert(language['setting.reset.warning']);
+  } catch (ex) {
+    addModMessage(
+      {
+        kind: 'Error',
+        messageId: `mod.message.id.unknown-error`,
+        details: dump(ex),
+      },
+      language,
+    );
+  }
+}
+
 function processInit(language: Language) {
   setStatus('none', language);
 
   applyLanguages(language);
 
-  const element = {
+  const elements = {
     stream: {
       file: ensureElementById('stream-file'),
       socket: ensureElementById('stream-socket'),
@@ -148,28 +177,39 @@ function processInit(language: Language) {
       clear: ensureElementById('action-clear'),
       stop: ensureElementById('action-stream-stop'),
     },
+    setting: {
+      edit: ensureElementById('setting-edit'),
+      reset: ensureElementById('setting-reset'),
+    },
   };
 
-  element.stream.file.addEventListener('click', async () => {
+  elements.stream.file.addEventListener('click', async () => {
     await processFile(language);
   });
 
-  element.stream.socket.addEventListener('click', async () => {
+  elements.stream.socket.addEventListener('click', async () => {
     await processSocket(language);
   });
 
-  element.log.upload.addEventListener('change', async (e) => {
+  elements.log.upload.addEventListener('change', async (e) => {
     if (e.target instanceof HTMLInputElement) {
       await processUpload(e.target, language);
     }
   });
 
-  element.action.clear.addEventListener('click', () => {
+  elements.action.clear.addEventListener('click', () => {
     clearLog();
   });
-  element.action.stop.addEventListener('click', () => {
+  elements.action.stop.addEventListener('click', () => {
     CurrentEventSourceReceiver?.cleanup();
     CurrentEventSourceReceiver = undefined;
+  });
+
+  elements.setting.edit.addEventListener('click', () => {
+    processSettingEdit(language);
+  });
+  elements.setting.reset.addEventListener('click', () => {
+    processSettingReset(language);
   });
 }
 

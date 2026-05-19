@@ -52,3 +52,13 @@ export function getFileStream(language: Language): EventSourceReceiver {
     language,
   );
 }
+
+export async function postSettingReset(): Promise<void> {
+  const response = await fetch(joinEndpoint('/api/setting/reset'), {
+    method: 'POST',
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to reset setting. Status: ${response.status}`);
+  }
+}
