@@ -27,6 +27,8 @@ namespace Elin.Plugin.Main.Models.Web.Runner
                 new Routing("GET", "/api/tail", TailAsync),
                 new Routing("GET", "/api/stream/file", StreamFileAsync),
                 new Routing("GET", "/api/stream/socket", StreamSocketAsync),
+                new Routing("GET", "/api/setting", SettingAsync),
+                new Routing("POST", "/api/setting/reset", ResetSettingAsync),
             };
         }
 
@@ -248,6 +250,26 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             }
         }
 
+        private async UniTask SettingAsync(System.Net.HttpListenerContext context, System.Threading.CancellationToken cancellationToken)
+        {
+            var response = new SettingResponse
+            {
+                Setting = ModHelper.Plugin.SettingProxy,
+            };
+            await WriteResponseAsync(context, response, cancellationToken: cancellationToken);
+        }
+
+        private async UniTask ResetSettingAsync(System.Net.HttpListenerContext context, System.Threading.CancellationToken cancellationToken)
+        {
+            ModHelper.Plugin.SettingProxy.Reset();
+
+            var response = new SimpleResultResponse
+            {
+                Success = true,
+            };
+            await WriteResponseAsync(context, response, cancellationToken: cancellationToken);
+        }
+
         #endregion
 
         #region RunnerBase
@@ -256,7 +278,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
         {
             var path = context.Request.Url.LocalPath;
 
-            ModHelper.LogDev($"path: {path}");
+            ModHelper.LogDev($"[{context.Request.HttpMethod}] path: {path}");
 
             var targetRoutings = Routings.Where(a => a.Path == path);
             if (!targetRoutings.Any())
@@ -264,6 +286,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
                 throw new WebServerException(HttpStatusCode.NotFound);
             }
 
+            // TODO: ここでヘッダ書き込みするとだめやもしれん
             var methods = targetRoutings.Select(a => a.HttpMethod).ToList();
             methods.Insert(0, "OPTIONS");
             context.Response.Headers.Add("Allow", string.Join(", ", methods));

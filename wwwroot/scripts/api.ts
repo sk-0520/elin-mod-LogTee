@@ -3,6 +3,7 @@ import type { Language } from './language';
 import { EventSourceReceiver } from './sse';
 import {
   FileNotFoundResponseScheme,
+  SimpleResultResponseScheme,
   type TailKnownNotFoundResponse,
   type TailKnownSuccessResponse,
   TailSuccessResponseScheme,
@@ -60,5 +61,13 @@ export async function postSettingReset(): Promise<void> {
 
   if (!response.ok) {
     throw new Error(`Failed to reset setting. Status: ${response.status}`);
+  }
+
+  const json = await response.json();
+  const result = SimpleResultResponseScheme.parse(json);
+  if (!result.success) {
+    throw new Error(
+      `Failed to reset setting. Details: ${JSON.stringify(result.details)}`,
+    );
   }
 }

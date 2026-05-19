@@ -96,3 +96,9 @@ export interface TailKnownNotFoundResponse {
 export type TailUnknownResponse =
   | TailKnownSuccessResponse
   | TailKnownNotFoundResponse;
+
+export const SimpleResultResponseScheme = z.object({
+  success: z.boolean(),
+  details: z.object().nullable(),
+});
+export type SimpleResultResponse = z.infer<typeof SimpleResultResponseScheme>;
