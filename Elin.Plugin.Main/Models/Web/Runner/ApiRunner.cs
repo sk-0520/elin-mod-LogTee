@@ -275,7 +275,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             ModHelper.LogDev($"1 setting: {JsonConvert.SerializeObject(settingProxy, JsonSerializerSettings)}");
             ModHelper.LogDev($"2 setting: {JsonConvert.SerializeObject(reqSetting, JsonSerializerSettings)}");
 
-            ObjectUtility.CopySetting(reqSetting, settingProxy);
+            reqSetting.CopyTo(settingProxy);
 
             ModHelper.LogDev($"3 setting: {JsonConvert.SerializeObject(settingProxy, JsonSerializerSettings)}");
 
