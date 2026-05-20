@@ -76,7 +76,15 @@ const LanguageItems = {
     jp: 'リセットしますか？',
     en: 'Are you sure you want to reset?',
   },
-  'setting.reset.warning': {
+  'setting.reset.submit': {
+    jp: 'リセット',
+    en: 'Reset',
+  },
+  'setting.reset.cancel': {
+    jp: 'キャンセル',
+    en: 'Cancel',
+  },
+  'setting.apply.warning': {
     jp: '設定反映には Elin の再起動が必要です',
     en: 'Restarting Elin is required to apply the settings.',
   },

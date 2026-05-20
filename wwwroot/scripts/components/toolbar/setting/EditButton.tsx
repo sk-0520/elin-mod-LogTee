@@ -30,6 +30,7 @@ const EditButton: FC = () => {
             setOpen(true);
           } catch (error) {
             setError(error);
+            setOpen(false);
           }
         }}
       >
