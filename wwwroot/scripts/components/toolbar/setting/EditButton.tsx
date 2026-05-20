@@ -8,7 +8,7 @@ import type { Setting } from '../../../types/csharp';
 import EditorContainer from './editor/EditorContainer';
 
 const EditButton: FC = () => {
-  const getText = useLanguageStore((state) => state.getText);
+  const getText = useLanguageStore((a) => a.getText);
   const setError = useErrorNotifyStore((a) => a.setError);
   const busyBlock = useBusyStore((a) => a.busyBlock);
   const [open, setOpen] = useState(false);

@@ -4,7 +4,7 @@ import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { clearLog } from '../../../utils/log';
 
 const ClearButton: FC = () => {
-  const getText = useLanguageStore((state) => state.getText);
+  const getText = useLanguageStore((a) => a.getText);
 
   return (
     <Button

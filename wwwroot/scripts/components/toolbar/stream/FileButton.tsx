@@ -13,7 +13,7 @@ const FileButton: FC = () => {
   const setReceiver = useStreamStore((a) => a.setReceiver);
   const setMode = useModeStore((a) => a.setMode);
   const language = useLanguageStore((a) => a.language);
-  const getText = useLanguageStore((state) => state.getText);
+  const getText = useLanguageStore((a) => a.getText);
   const busyBlock = useBusyStore((a) => a.busyBlock);
 
   return (

@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { type FC, useEffect } from 'react';
 import Busy from './components/busy/Busy';
 import ErrorDialog from './components/error/ErrorDialog';
 import ActionContainer from './components/toolbar/action/ActionContainer';
@@ -8,9 +8,18 @@ import SettingContainer from './components/toolbar/setting/SettingContainer';
 import StreamContainer from './components/toolbar/stream/StreamContainer';
 import ToolbarGroup from './components/toolbar/ToolbarGroup';
 import { useLanguageStore } from './stores/useLanguageStore';
+import { getLanguage } from './utils/language';
+import { getQuery } from './utils/query';
 
 export const ToolbarContainer: FC = () => {
-  const getText = useLanguageStore((state) => state.getText); // for re-render when language changes
+  const setLanguage = useLanguageStore((a) => a.setLanguage); // for re-render when language changes
+  const getText = useLanguageStore((a) => a.getText); // for re-render when language changes
+
+  useEffect(() => {
+    const query = getQuery(location.search);
+    const lang = getLanguage(query.get('lang') ?? undefined);
+    setLanguage(lang);
+  }, [setLanguage]);
 
   return (
     <>

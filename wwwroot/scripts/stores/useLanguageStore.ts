@@ -22,7 +22,12 @@ export const useLanguageStore = create<LanguageStore>()((set, get) => {
     ...DefaultState,
 
     setLanguage: (language: Language) => {
-      set({ language });
+      const store = get();
+      set({
+        language: { ...language },
+        getText: (a) => store.getText(a),
+        unsafeGetText: (a) => store.unsafeGetText(a),
+      });
     },
 
     getText: (key: keyof Language) => {

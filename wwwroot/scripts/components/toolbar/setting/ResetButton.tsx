@@ -7,7 +7,7 @@ import { useLanguageStore } from '../../../stores/useLanguageStore';
 
 const ResetButton: FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
-  const getText = useLanguageStore((state) => state.getText);
+  const getText = useLanguageStore((a) => a.getText);
   const setError = useErrorNotifyStore((a) => a.setError);
   const busyBlock = useBusyStore((a) => a.busyBlock);
 

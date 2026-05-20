@@ -7,7 +7,7 @@ import { useStreamStore } from '../../../stores/useStreamStore';
 const StopButton: FC = () => {
   const close = useStreamStore((a) => a.close);
   const setMode = useModeStore((a) => a.setMode);
-  const getText = useLanguageStore((state) => state.getText);
+  const getText = useLanguageStore((a) => a.getText);
 
   return (
     <Button
