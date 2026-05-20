@@ -6,7 +6,6 @@ import { useBusyStore } from '../../../stores/useBusyStore';
 import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useModeStore } from '../../../stores/useModeStore';
 import { useStreamStore } from '../../../stores/useStreamStore';
-import { dump } from '../../../utils/access';
 import { addLogItem, addModMessage } from '../../../utils/log';
 
 const FileButton: FC = () => {
@@ -60,7 +59,7 @@ const FileButton: FC = () => {
             {
               kind: 'Error',
               messageId: 'mod.message.id.unknown-error',
-              details: dump(ex),
+              details: ex,
             },
             language,
           );

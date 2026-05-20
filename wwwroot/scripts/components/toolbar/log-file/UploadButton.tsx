@@ -1,4 +1,3 @@
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import type { FC } from 'react';
@@ -6,7 +5,7 @@ import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useModeStore } from '../../../stores/useModeStore';
 import { useStreamStore } from '../../../stores/useStreamStore';
 import { LogItemScheme } from '../../../types/csharp';
-import { dump, get } from '../../../utils/access';
+import { get } from '../../../utils/access';
 import { addLogItems, addModMessage } from '../../../utils/log';
 
 const VisuallyHiddenInput = styled('input')({
@@ -24,16 +23,17 @@ const VisuallyHiddenInput = styled('input')({
 const UploadButton: FC = () => {
   const close = useStreamStore((a) => a.close);
   const setMode = useModeStore((a) => a.setMode);
+  const getText = useLanguageStore((a) => a.getText);
   const language = useLanguageStore((a) => a.language);
 
   return (
     <Button
       component="label"
-      variant="contained"
+      //variant="contained"
       tabIndex={-1}
-      startIcon={<CloudUploadIcon />}
+      //startIcon={<CloudUploadIcon />}
     >
-      Upload files
+      {getText('log-file.upload')}
       <VisuallyHiddenInput
         type="file"
         onChange={async (event) => {
@@ -61,7 +61,7 @@ const UploadButton: FC = () => {
               {
                 kind: 'Error',
                 messageId: `mod.message.id.unknown-error`,
-                details: dump(ex),
+                details: ex,
               },
               language,
             );

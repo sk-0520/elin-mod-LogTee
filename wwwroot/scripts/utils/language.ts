@@ -52,6 +52,10 @@ const LanguageItems = {
     jp: 'ログファイル',
     en: 'Log File',
   },
+  'log-file.upload': {
+    jp: 'アップロード',
+    en: 'Upload',
+  },
   'action.title': {
     jp: 'アクション',
     en: 'Action',

@@ -5,7 +5,7 @@ import type {
   ModMessage,
   ModMessageKind,
 } from '../types/csharp';
-import { get } from './access';
+import { dump, get } from './access';
 import {
   createLogItemElementByTemplate,
   createModMessageElementByTemplate,
@@ -80,7 +80,7 @@ function createModMessageElement(
 
   elements.message.textContent = language[message];
   if (details) {
-    elements.detail.textContent = JSON.stringify(details, null, 2);
+    elements.detail.textContent = JSON.stringify(dump(details), null, 2);
   } else {
     elements.detail.remove();
   }

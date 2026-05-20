@@ -5,7 +5,6 @@ import { useBusyStore } from '../../../stores/useBusyStore';
 import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useModeStore } from '../../../stores/useModeStore';
 import { useStreamStore } from '../../../stores/useStreamStore';
-import { dump } from '../../../utils/access';
 import { addModMessage } from '../../../utils/log';
 
 const SocketButton: FC = () => {
@@ -41,7 +40,7 @@ const SocketButton: FC = () => {
             {
               kind: 'Error',
               messageId: 'mod.message.id.unknown-error',
-              details: dump(ex),
+              details: ex,
             },
             language,
           );
