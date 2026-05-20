@@ -90,7 +90,7 @@ namespace Elin.Plugin.Main
                 SocketServer.StartAsync().Forget();
             }
 
-            LogBuffer = new LogBuffer(LogTimeProvider, SyncObject, setting.LogBufferSetting, setting.LogFile, setting.SocketClient);
+            LogBuffer = new LogBuffer(LogTimeProvider, SyncObject, setting.LogBuffer, setting.LogFile, setting.SocketClient);
 
             if (setting.WebServer.IsEnabled)
             {

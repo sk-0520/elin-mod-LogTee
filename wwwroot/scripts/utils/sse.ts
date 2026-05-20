@@ -1,11 +1,12 @@
+// SSE で一生データを受信するとブラウザが死ぬので制限する
+
+import { useModeStore } from '../stores/useModeStore';
+import { LogItemScheme } from '../types/csharp';
 import { dump } from './access';
 import { getLogElement } from './dom';
 import type { Language } from './language';
 import { addLogItem, addModMessage, removeHeadElements } from './log';
-import { setStatus } from './status';
-import { LogItemScheme } from './types';
 
-// SSE で一生データを受信するとブラウザが死ぬので制限する
 // ファイルアップロードに関しては一回きりとして制限しない方針
 const SseLogElementLimit = 4 * 1024;
 
@@ -53,7 +54,7 @@ export class EventSourceReceiver {
       },
       this.language,
     );
-    setStatus('none', this.language);
+    useModeStore.getState().setMode('none');
   }
 
   private onMessage(event: MessageEvent) {

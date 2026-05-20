@@ -23,5 +23,5 @@ charset = utf-8-bom
 indent_style = tab
 indent_size = 4
 
-[*.{ts,css,html}]
+[*.{ts,tsx,css,html}]
 end_of_line = lf

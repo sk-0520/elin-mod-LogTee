@@ -9,7 +9,7 @@ namespace Elin.Plugin.Main.Models.Settings
 
         internal static Setting Instance { get; set; } = new Setting();
 
-        public LogBufferSetting LogBufferSetting { get; set; } = new LogBufferSetting()
+        public LogBufferSetting LogBuffer { get; set; } = new LogBufferSetting()
         {
             Capacity = 32,
             LogFlushLimit = 30,

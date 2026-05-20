@@ -20,11 +20,11 @@ function getEnvPath(): string {
 export default defineConfig({
   mode: isDev ? 'development' : 'production',
   entry: {
-    script: './wwwroot/script.ts',
+    script: './wwwroot/script.tsx',
   },
   target: ['browserslist:last 2 versions, > 0.2%, not dead, Firefox ESR'],
   resolve: {
-    extensions: ['...', '.ts'],
+    extensions: ['...', '.ts', '.tsx'],
   },
   output: {
     path: './Elin.Plugin.Main/@Assets/wwwroot',
@@ -38,6 +38,24 @@ export default defineConfig({
       {
         test: /\.svg$/,
         type: 'asset',
+      },
+      {
+        test: /\.tsx$/,
+        use: {
+          loader: 'builtin:swc-loader',
+            options: {
+              detectSyntax: 'auto',
+              jsc: {
+                externalHelpers: true,
+                transform: {
+                  react: {
+                    runtime: 'automatic',
+                  },
+                },
+              },
+            },
+        },
+        type: 'javascript/auto',
       },
       {
         test: /\.(?:js|mjs|cjs|ts|mts|cts)$/,

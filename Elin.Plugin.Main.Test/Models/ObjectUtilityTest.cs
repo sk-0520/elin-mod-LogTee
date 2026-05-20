@@ -8,7 +8,7 @@ namespace Elin.Plugin.Main.Test.Models
 
         private class ChildTestClass
         {
-            public int Value { get; set; }
+            public string? Value { get; set; }
         }
 
         private class TestClass
@@ -23,7 +23,7 @@ namespace Elin.Plugin.Main.Test.Models
             var source = new TestClass
             {
                 Value = 42,
-                Child = new ChildTestClass { Value = 100 }
+                Child = new ChildTestClass { Value = "abc" }
             };
             var destination = new TestClass();
             ObjectUtility.CopySetting(source, destination);

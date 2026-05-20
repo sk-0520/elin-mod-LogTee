@@ -27,7 +27,7 @@ namespace Elin.Plugin.Main.Models
                 {
                     var sourceValue = property.GetValue(source);
 
-                    if (property.PropertyType.IsClass)
+                    if (property.PropertyType.IsClass && property.PropertyType != typeof(string))
                     {
                         var destinationValue = property.GetValue(destination);
                         CopySetting(sourceValue, destinationValue);

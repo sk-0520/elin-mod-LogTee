@@ -1,3 +1,10 @@
+import type {
+  GameDateTime,
+  LogItem,
+  MessageColor,
+  ModMessage,
+  ModMessageKind,
+} from '../types/csharp';
 import { get } from './access';
 import {
   createLogItemElementByTemplate,
@@ -6,13 +13,6 @@ import {
   getLogElement,
 } from './dom';
 import type { Language } from './language';
-import type {
-  GameDateTime,
-  LogItem,
-  MessageColor,
-  ModMessage,
-  ModMessageKind,
-} from './types';
 
 const DefaultColor = '#fff';
 let LastColor: string | undefined;

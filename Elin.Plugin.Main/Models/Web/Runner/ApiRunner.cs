@@ -272,8 +272,12 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             var reqSetting = request.Setting;
 
             var settingProxy = ModHelper.Plugin.SettingProxy;
+            ModHelper.LogDev($"1 setting: {JsonConvert.SerializeObject(settingProxy, JsonSerializerSettings)}");
+            ModHelper.LogDev($"2 setting: {JsonConvert.SerializeObject(reqSetting, JsonSerializerSettings)}");
 
             ObjectUtility.CopySetting(reqSetting, settingProxy);
+
+            ModHelper.LogDev($"3 setting: {JsonConvert.SerializeObject(settingProxy, JsonSerializerSettings)}");
 
             var response = new SimpleResultResponse
             {
@@ -315,6 +319,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             context.Response.Headers.Add("Allow", string.Join(", ", methods));
             context.Response.Headers.Add("Access-Control-Request-Method", string.Join(", ", methods));
             context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
 
             if (context.Request.HttpMethod == "OPTIONS")
             {

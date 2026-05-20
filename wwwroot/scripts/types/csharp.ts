@@ -139,11 +139,12 @@ export type WebServerSetting = z.infer<typeof WebServerSettingScheme>;
 
 export const FrontendSettingScheme = z.object({
   cssFontFamily: z.string(),
+  cssFontSize: z.string(),
 });
 export type FrontendSetting = z.infer<typeof FrontendSettingScheme>;
 
 export const SettingScheme = z.object({
-  logBufferSetting: LogBufferSettingScheme,
+  logBuffer: LogBufferSettingScheme,
   logFile: LogFileSettingScheme,
   socketServer: SocketServerSettingScheme,
   socketClient: SocketClientSettingScheme,
