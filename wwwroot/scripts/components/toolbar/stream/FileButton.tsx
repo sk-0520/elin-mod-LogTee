@@ -38,7 +38,7 @@ const FileButton: FC = () => {
           } else {
             addModMessage(
               {
-                kind: 'Error',
+                kind: 'Warning',
                 messageId: 'mod.message.id.api-tail-file-not-found',
                 details: { path: tailResult.data.path },
               },
