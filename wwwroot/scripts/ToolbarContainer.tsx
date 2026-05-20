@@ -1,4 +1,6 @@
 import type { FC } from 'react';
+import Busy from './components/busy/Busy';
+import ErrorDialog from './components/error/ErrorDialog';
 import ActionContainer from './components/toolbar/action/ActionContainer';
 import LogFileContainer from './components/toolbar/log-file/LogFileContainer';
 import ModeContainer from './components/toolbar/mode/ModeContainer';
@@ -27,6 +29,9 @@ export const ToolbarContainer: FC = () => {
       <ToolbarGroup title={getText('setting.title')}>
         <SettingContainer />
       </ToolbarGroup>
+      {/* TODO: このあたりの処理しらんわ, とりあえず動く処理にしたうえで対応策は調べて実装する */}
+      <ErrorDialog />
+      <Busy />
     </>
   );
 };

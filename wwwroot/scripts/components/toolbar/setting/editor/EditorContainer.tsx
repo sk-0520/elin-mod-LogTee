@@ -16,6 +16,7 @@ import { styled } from '@mui/material/styles';
 import type { FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import postSetting from '../../../../api/postSetting';
+import { useErrorNotifyStore } from '../../../../stores/useErrorNotifyStore';
 import { useLanguageStore } from '../../../../stores/useLanguageStore';
 import type { Setting } from '../../../../types/csharp';
 import EditorGroup from './EditorGroup';
@@ -46,6 +47,7 @@ export interface EditorContainerProps {
 const EditorContainer: FC<EditorContainerProps> = (props) => {
   const { setting, onCancel } = props;
   const getText = useLanguageStore((a) => a.getText);
+  const setError = useErrorNotifyStore((a) => a.setError);
   const { control, handleSubmit } = useForm<Setting>({
     defaultValues: setting,
   });
@@ -55,7 +57,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
     try {
       await postSetting(data);
     } catch (error) {
-      console.error(error);
+      setError(error);
     }
   };
 

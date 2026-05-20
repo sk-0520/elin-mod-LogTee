@@ -2,6 +2,7 @@ import { Button } from '@mui/material';
 import type { FC } from 'react';
 import getFileStream from '../../../api/getFileStream';
 import getTailApi from '../../../api/getTailApi';
+import { useBusyStore } from '../../../stores/useBusyStore';
 import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useModeStore } from '../../../stores/useModeStore';
 import { useStreamStore } from '../../../stores/useStreamStore';
@@ -14,6 +15,7 @@ const FileButton: FC = () => {
   const setMode = useModeStore((a) => a.setMode);
   const language = useLanguageStore((a) => a.language);
   const getText = useLanguageStore((state) => state.getText);
+  const busyBlock = useBusyStore((a) => a.busyBlock);
 
   return (
     <Button
@@ -28,7 +30,7 @@ const FileButton: FC = () => {
         );
 
         try {
-          const tailResult = await getTailApi();
+          const tailResult = await busyBlock(async () => await getTailApi());
 
           if (tailResult.mode === 'success') {
             for (const logItem of tailResult.data.logItems) {
@@ -49,8 +51,10 @@ const FileButton: FC = () => {
           close();
 
           setMode('stream-file');
-          const stream = getFileStream(language);
-          setReceiver('file', stream);
+          await busyBlock(async () => {
+            const stream = getFileStream(language);
+            setReceiver('file', stream);
+          });
         } catch (ex) {
           addModMessage(
             {

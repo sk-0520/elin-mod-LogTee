@@ -80,6 +80,14 @@ const LanguageItems = {
     jp: '設定反映には Elin の再起動が必要です',
     en: 'Restarting Elin is required to apply the settings.',
   },
+  'error-dialog.title': {
+    jp: 'エラー',
+    en: 'Error',
+  },
+  'error-dialog.close': {
+    jp: '閉じる',
+    en: 'Close',
+  },
   //--------------------------------------------
   // 設定UI
   'setting.editor.title': {

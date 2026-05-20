@@ -66,7 +66,7 @@ function createLogItemElement(
 
 function createModMessageElement(
   kind: ModMessageKind,
-  message: string,
+  message: keyof Language,
   details: object | undefined,
   _timestamp: Date,
   language: Language,
@@ -78,7 +78,7 @@ function createModMessageElement(
     detail: ensureSelector(messageElement, '.mod-message-detail'),
   };
 
-  elements.message.textContent = language[message] ?? message;
+  elements.message.textContent = language[message];
   if (details) {
     elements.detail.textContent = JSON.stringify(details, null, 2);
   } else {

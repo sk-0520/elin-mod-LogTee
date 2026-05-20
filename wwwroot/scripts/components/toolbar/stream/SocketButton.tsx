@@ -1,6 +1,7 @@
 import { Button } from '@mui/material';
 import type { FC } from 'react';
 import getSocketStream from '../../../api/getSocketStream';
+import { useBusyStore } from '../../../stores/useBusyStore';
 import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { useModeStore } from '../../../stores/useModeStore';
 import { useStreamStore } from '../../../stores/useStreamStore';
@@ -13,10 +14,11 @@ const SocketButton: FC = () => {
   const setMode = useModeStore((a) => a.setMode);
   const language = useLanguageStore((a) => a.language);
   const getText = useLanguageStore((state) => state.getText);
+  const busyBlock = useBusyStore((a) => a.busyBlock);
 
   return (
     <Button
-      onClick={() => {
+      onClick={async () => {
         addModMessage(
           {
             kind: 'Information',
@@ -30,8 +32,10 @@ const SocketButton: FC = () => {
           close();
 
           setMode('stream-socket');
-          const stream = getSocketStream(language);
-          setReceiver('socket', stream);
+          await busyBlock(async () => {
+            const stream = getSocketStream(language);
+            setReceiver('socket', stream);
+          });
         } catch (ex) {
           addModMessage(
             {

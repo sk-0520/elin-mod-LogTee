@@ -5,12 +5,14 @@ import {
   TailSuccessResponseScheme,
   type TailUnknownResponse,
 } from '../types/csharp';
-import { joinEndpoint, throwIfNotOk } from '../utils/api';
+import { joinEndpoint, throwIfNotStatus } from '../utils/api';
 
 export default async function getTailApi(): Promise<TailUnknownResponse> {
   const response = await fetch(joinEndpoint('/api/tail'), {
     method: 'GET',
   });
+
+  throwIfNotStatus(response, [200, 404]);
 
   if (response.status === 404) {
     const json = await response.json();
@@ -19,8 +21,6 @@ export default async function getTailApi(): Promise<TailUnknownResponse> {
       data: FileNotFoundResponseScheme.parse(json),
     } satisfies TailKnownNotFoundResponse;
   }
-
-  throwIfNotOk(response);
 
   const json = await response.json();
   const result = TailSuccessResponseScheme.parse(json);
