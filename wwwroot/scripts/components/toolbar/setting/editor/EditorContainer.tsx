@@ -56,6 +56,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
     console.log(data);
     try {
       await postSetting(data);
+      // 全部初期化すべし
+      // 細かい状態管理をしていないのでこれでよろし
+      location.reload();
     } catch (error) {
       setError(error);
     }

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { Environment } from '../utils/env';
 import { getLanguage, type Language } from '../utils/language';
 
 export interface LanguageState {
@@ -37,7 +38,17 @@ export const useLanguageStore = create<LanguageStore>()((set, get) => {
 
     unsafeGetText: (key: string) => {
       const state = get();
-      return state.language[key as keyof Language] ?? key;
+      let result = state.language[key as keyof Language];
+      if (result === undefined) {
+        console.warn(`Language key "${key}" is not defined.`);
+      }
+      if (Environment.isDebug) {
+        if (result === undefined) {
+          throw new Error(`Language key "${key}" is not defined.`);
+        }
+      }
+      result ??= key;
+      return result;
     },
   };
 });
