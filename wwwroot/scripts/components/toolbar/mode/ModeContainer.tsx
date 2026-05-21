@@ -9,7 +9,7 @@ const ModeContainer: FC = () => {
   const getText = useLanguageStore((a) => a.getText);
 
   return (
-    <Box sx={{ width: '80px' }}>
+    <Box sx={{ width: '200px' }}>
       <Typography>{getText(toTextId(mode))}</Typography>
     </Box>
   );

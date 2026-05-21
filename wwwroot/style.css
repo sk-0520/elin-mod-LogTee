@@ -17,19 +17,6 @@ body {
     sans-serif;
 }
 
-.toolbar {
-  display: flex;
-  gap: 1em;
-
-  .toolbar-group {
-    padding: 0.5em;
-  }
-
-  h1.toolbar-group {
-    font-size: 1em;
-  }
-}
-
 .log-container {
   background: #000;
   flex: 1 1 100%;

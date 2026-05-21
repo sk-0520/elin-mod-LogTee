@@ -20,7 +20,7 @@ function getEnvPath(): string {
 export default defineConfig({
   mode: isDev ? 'development' : 'production',
   entry: {
-    script: './wwwroot/script.tsx',
+    script: './wwwroot/script.ts',
   },
   target: ['browserslist:last 2 versions, > 0.2%, not dead, Firefox ESR'],
   resolve: {

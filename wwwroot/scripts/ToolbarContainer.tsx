@@ -9,6 +9,7 @@ import SettingContainer from './components/toolbar/setting/SettingContainer';
 import StreamContainer from './components/toolbar/stream/StreamContainer';
 import ToolbarGroup from './components/toolbar/ToolbarGroup';
 import { useLanguageStore } from './stores/useLanguageStore';
+import { ensureElementById } from './utils/dom';
 import { getLanguage } from './utils/language';
 import { getQuery } from './utils/query';
 
@@ -21,6 +22,14 @@ export const ToolbarContainer: FC = () => {
     const query = getQuery(location.search);
     const lang = getLanguage(query.get('lang') ?? undefined);
     setLanguage(lang);
+
+    // いろいろあきらめ！
+    const target = query.get('target');
+    if (target === 'socket') {
+      ensureElementById('stream-socket-command').click();
+    } else if (target === 'file') {
+      ensureElementById('stream-file-command').click();
+    }
   }, []);
 
   return (

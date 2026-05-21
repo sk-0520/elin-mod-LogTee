@@ -1,5 +1,8 @@
 import type { FrontendSetting } from '../types/csharp';
+import { getLogElement } from './dom';
 
-export function applyFrontendSetting(_setting: FrontendSetting): void {
-  // TODO: 設定割り振り
+export function applyFrontendSetting(setting: FrontendSetting): void {
+  const logElement = getLogElement();
+  logElement.style.fontFamily = setting.cssFontFamily;
+  logElement.style.fontSize = setting.cssFontSize;
 }

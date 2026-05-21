@@ -17,6 +17,7 @@ const SocketButton: FC = () => {
 
   return (
     <Button
+      id="stream-socket-command"
       onClick={async () => {
         addModMessage(
           {

@@ -18,6 +18,7 @@ const FileButton: FC = () => {
 
   return (
     <Button
+      id="stream-file-command"
       onClick={async () => {
         addModMessage(
           {
