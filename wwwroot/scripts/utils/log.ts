@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import LogItemContainer from '../LogItemContainer';
 import type {
   GameDateTime,
   LogItem,
@@ -7,7 +10,6 @@ import type {
 } from '../types/csharp';
 import { dump, get } from './access';
 import {
-  createLogItemElementByTemplate,
   createModMessageElementByTemplate,
   ensureSelector,
   getLogElement,
@@ -44,7 +46,7 @@ function _convertGameTimestamp(timestamp: GameDateTime): string {
 
 function createLogItemElement(
   logItem: LogItem,
-  color: string,
+  _color: string,
   _language: Language,
 ): HTMLElement | undefined {
   if (logItem.message.kind === 'NewLine') {
@@ -55,12 +57,17 @@ function createLogItemElement(
     return undefined;
   }
 
-  const logItemElement = createLogItemElementByTemplate();
+  // const logItemElement = createLogItemElementByTemplate();
 
-  logItemElement.style.color = color;
-  // TODO: まぁローカルで脆弱性があるだけなので、勘弁してくれ
-  logItemElement.innerHTML = logItem.message.message;
+  // logItemElement.style.color = color;
+  // // TODO: まぁローカルで脆弱性があるだけなので、勘弁してくれ
+  // logItemElement.innerHTML = logItem.message.message;
 
+  // return logItemElement;
+
+  const logItemElement = document.createElement('span');
+  ReactDOM.createRoot(logItemElement);
+  React.createElement(LogItemContainer, { log: logItem });
   return logItemElement;
 }
 

@@ -13,7 +13,7 @@ import { ensureElementById } from './utils/dom';
 import { getLanguage } from './utils/language';
 import { getQuery } from './utils/query';
 
-export const ToolbarContainer: FC = () => {
+const ToolbarContainer: FC = () => {
   const setLanguage = useLanguageStore((a) => a.setLanguage); // for re-render when language changes
   const getText = useLanguageStore((a) => a.getText); // for re-render when language changes
 
