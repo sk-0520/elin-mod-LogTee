@@ -1,3 +1,4 @@
+import { Grid } from '@mui/material';
 import { type FC, useEffect } from 'react';
 import Busy from './components/busy/Busy';
 import ErrorDialog from './components/error/ErrorDialog';
@@ -23,7 +24,14 @@ export const ToolbarContainer: FC = () => {
   }, []);
 
   return (
-    <>
+    <Grid
+      container
+      direction="row"
+      sx={{
+        justifyContent: 'space-around',
+        alignItems: 'stretch',
+      }}
+    >
       <ToolbarGroup title={getText('mode.title')}>
         <ModeContainer />
       </ToolbarGroup>
@@ -42,7 +50,7 @@ export const ToolbarContainer: FC = () => {
       {/* TODO: このあたりの処理しらんわ, とりあえず動く処理にしたうえで対応策は調べて実装する */}
       <ErrorDialog />
       <Busy />
-    </>
+    </Grid>
   );
 };
 

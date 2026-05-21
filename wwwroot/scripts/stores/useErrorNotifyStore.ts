@@ -45,7 +45,7 @@ export const useErrorNotifyStore = create<ErrorNotifyStore>()((set, get) => {
     },
 
     clearError: () => {
-      set({ hasError: false, message: '', details: undefined });
+      set({ hasError: false });
     },
   };
 });

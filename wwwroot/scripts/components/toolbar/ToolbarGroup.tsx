@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import type { FC } from 'react';
 
 export interface ToolbarGroupProps {
@@ -10,10 +10,10 @@ const ToolbarGroup: FC<ToolbarGroupProps> = (props) => {
   const { title, children } = props;
 
   return (
-    <Box>
+    <Paper sx={{ margin: '0.5em 0.5ch', padding: '0.25em 1em' }}>
       <Typography>{title}</Typography>
-      {children}
-    </Box>
+      <Box>{children}</Box>
+    </Paper>
   );
 };
 

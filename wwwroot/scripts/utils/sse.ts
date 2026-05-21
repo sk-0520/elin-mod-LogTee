@@ -58,6 +58,11 @@ export class EventSourceReceiver {
   }
 
   private onMessage(event: MessageEvent) {
+    const state = useModeStore.getState();
+    if (state.mode === 'none') {
+      state.setMode(this.target === 'socket' ? 'stream-socket' : 'stream-file');
+    }
+
     this.doMessage(event.data);
   }
 
