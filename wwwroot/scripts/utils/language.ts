@@ -20,99 +20,122 @@ const LanguageItems = {
     en: 'None',
     cn: '无',
   },
-  'mode.enum.stream-file': {
-    jp: 'ファイル',
-    en: 'File',
-  },
   'mode.enum.stream-socket': {
     jp: 'ソケット',
     en: 'Socket',
+    cn: '套接字',
+  },
+  'mode.enum.stream-file': {
+    jp: 'ファイル',
+    en: 'File',
+    cn: '文件',
   },
   'mode.enum.upload': {
     jp: 'アップロード',
     en: 'Upload',
+    cn: '上传',
   },
   'stream.title': {
     jp: 'ストリーム',
     en: 'Stream',
+    cn: '流',
   },
   'stream.socket': {
     jp: 'ソケット',
     en: 'Socket',
+    cn: '套接字',
   },
   'stream.file': {
     jp: 'ファイル',
     en: 'File',
+    cn: '文件',
   },
   'stream.stop': {
     jp: '停止',
     en: 'Stop',
+    cn: '停止',
   },
   'log-file.title': {
     jp: 'ログファイル',
     en: 'Log File',
+    cn: '日志文件',
   },
   'log-file.upload': {
     jp: 'アップロード',
     en: 'Upload',
+    cn: '上传',
   },
   'action.title': {
     jp: 'アクション',
     en: 'Action',
+    cn: '操作',
   },
   'action.clear': {
     jp: 'クリア',
     en: 'Clear',
+    cn: '清除',
   },
   'setting.title': {
     jp: '設定',
     en: 'Setting',
+    cn: '设置',
   },
   'setting.edit': {
     jp: '編集',
     en: 'Edit',
+    cn: '编辑',
   },
   'setting.reset': {
     jp: 'リセット',
     en: 'Reset',
+    cn: '重置',
   },
   'setting.reset.confirm': {
     jp: 'リセットしますか？',
     en: 'Are you sure you want to reset?',
+    cn: '您确定要重置吗？',
   },
   'setting.reset.submit': {
     jp: 'リセット',
     en: 'Reset',
+    cn: '重置',
   },
   'setting.reset.cancel': {
     jp: 'キャンセル',
     en: 'Cancel',
+    cn: '取消',
   },
   'setting.apply.warning': {
     jp: '設定反映には Elin の再起動が必要です',
     en: 'Restarting Elin is required to apply the settings.',
+    cn: '应用设置需要重启 Elin。',
   },
   'error-dialog.title': {
     jp: 'エラー',
     en: 'Error',
+    cn: '错误',
   },
   'error-dialog.close': {
     jp: '閉じる',
     en: 'Close',
+    cn: '关闭',
   },
   //--------------------------------------------
   // 設定UI
   'setting.editor.title': {
     jp: '設定の編集',
     en: 'Edit Setting',
+    cn: '编辑设置',
   },
   'setting.editor.save': {
     jp: '保存',
     en: 'Save',
+    cn: '保存',
   },
   'setting.editor.cancel': {
     jp: 'キャンセル',
     en: 'Cancel',
+    cn: '取消',
   },
   // logBuffer
   'setting.editor.logBuffer.title': {
@@ -120,12 +143,12 @@ const LanguageItems = {
     en: 'Log Buffer',
   },
   'setting.editor.logBuffer.capacity': {
-    jp: 'ログバッファ容量',
-    en: 'Log Buffer Capacity',
+    jp: '容量',
+    en: 'Capacity',
   },
   'setting.editor.logBuffer.logFlushLimit': {
-    jp: 'ログフラッシュ制限',
-    en: 'Log Flush Limit',
+    jp: '反映までの制限',
+    en: 'Flush Limit',
   },
   // logFile
   'setting.editor.logFile.title': {
@@ -133,12 +156,12 @@ const LanguageItems = {
     en: 'Log File',
   },
   'setting.editor.logFile.isEnabled': {
-    jp: 'ログファイル有効',
-    en: 'Log File Enabled',
+    jp: '有効',
+    en: 'Enabled',
   },
   'setting.editor.logFile.filePath': {
-    jp: 'ログファイルパス',
-    en: 'Log File Path',
+    jp: 'ファイルパス',
+    en: 'File Path',
   },
   // socketServer
   'setting.editor.socketServer.title': {
@@ -146,8 +169,8 @@ const LanguageItems = {
     en: 'Socket Server',
   },
   'setting.editor.socketServer.isEnabled': {
-    jp: 'ソケットサーバー有効',
-    en: 'Socket Server Enabled',
+    jp: '有効',
+    en: 'Enabled',
   },
   'setting.editor.socketServer.port': {
     jp: 'ポート',
@@ -163,8 +186,8 @@ const LanguageItems = {
     en: 'Socket Client',
   },
   'setting.editor.socketClient.isEnabled': {
-    jp: 'ソケットクライアント有効',
-    en: 'Socket Client Enabled',
+    jp: '有効',
+    en: 'Enabled',
   },
   'setting.editor.socketClient.port': {
     jp: 'ポート',
@@ -176,8 +199,8 @@ const LanguageItems = {
     en: 'Web Server',
   },
   'setting.editor.webServer.isEnabled': {
-    jp: 'Webサーバー有効',
-    en: 'Web Server Enabled',
+    jp: '有効',
+    en: 'Enabled',
   },
   'setting.editor.webServer.port': {
     jp: 'ポート',

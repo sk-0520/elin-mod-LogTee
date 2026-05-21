@@ -15,11 +15,12 @@ export const ToolbarContainer: FC = () => {
   const setLanguage = useLanguageStore((a) => a.setLanguage); // for re-render when language changes
   const getText = useLanguageStore((a) => a.getText); // for re-render when language changes
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 初回実行
   useEffect(() => {
     const query = getQuery(location.search);
     const lang = getLanguage(query.get('lang') ?? undefined);
     setLanguage(lang);
-  }, [setLanguage]);
+  }, []);
 
   return (
     <>

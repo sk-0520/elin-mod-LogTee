@@ -272,12 +272,8 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             var reqSetting = request.Setting;
 
             var settingProxy = ModHelper.Plugin.SettingProxy;
-            ModHelper.LogDev($"1 setting: {JsonConvert.SerializeObject(settingProxy, JsonSerializerSettings)}");
-            ModHelper.LogDev($"2 setting: {JsonConvert.SerializeObject(reqSetting, JsonSerializerSettings)}");
 
             reqSetting.CopyTo(settingProxy);
-
-            ModHelper.LogDev($"3 setting: {JsonConvert.SerializeObject(settingProxy, JsonSerializerSettings)}");
 
             var response = new SimpleResultResponse
             {
