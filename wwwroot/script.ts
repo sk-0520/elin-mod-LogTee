@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
-import { ensureElementById } from './scripts/utils/dom';
+import { createReactRootElement, ensureElementById } from './scripts/utils/dom';
 import './style.css';
-import React, { StrictMode } from 'react';
+import React from 'react';
 import { getSetting } from './scripts/api/getSetting';
 import ToolbarContainer from './scripts/ToolbarContainer';
 import { Environment } from './scripts/utils/env';
@@ -13,13 +13,10 @@ const toolbarContainerElement = ReactDOM.createRoot(
 );
 
 toolbarContainerElement.render(
-  Environment.isDebug
-    ? React.createElement(
-        StrictMode,
-        undefined,
-        React.createElement(ToolbarContainer),
-      )
-    : React.createElement(ToolbarContainer),
+  createReactRootElement(
+    React.createElement(ToolbarContainer),
+    Environment.isDebug,
+  ),
 );
 
 setTimeout(async () => {

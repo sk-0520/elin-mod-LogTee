@@ -1,19 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import LogItemContainer from '../LogItemContainer';
+import LogItemContainer, {
+  type LogItemLogItemContainerProps,
+  type LogItemModMessageContainerProps,
+} from '../LogItemContainer';
 import type {
   GameDateTime,
   LogItem,
   MessageColor,
   ModMessage,
+  ModMessageId,
   ModMessageKind,
 } from '../types/csharp';
-import { dump, get } from './access';
-import {
-  createModMessageElementByTemplate,
-  ensureSelector,
-  getLogElement,
-} from './dom';
+import { get } from './access';
+import { createReactRootElement, getLogElement } from './dom';
+import { Environment } from './env';
 import type { Language } from './language';
 
 const DefaultColor = '#fff';
@@ -46,7 +47,7 @@ function _convertGameTimestamp(timestamp: GameDateTime): string {
 
 function createLogItemElement(
   logItem: LogItem,
-  _color: string,
+  color: string,
   _language: Language,
 ): HTMLElement | undefined {
   if (logItem.message.kind === 'NewLine') {
@@ -66,18 +67,28 @@ function createLogItemElement(
   // return logItemElement;
 
   const logItemElement = document.createElement('span');
-  ReactDOM.createRoot(logItemElement);
-  React.createElement(LogItemContainer, { log: logItem });
+  const reactRoot = ReactDOM.createRoot(logItemElement);
+  reactRoot.render(
+    createReactRootElement(
+      React.createElement(LogItemContainer, {
+        type: 'logItem',
+        log: logItem,
+        color: color,
+      } satisfies LogItemLogItemContainerProps),
+      Environment.isDebug,
+    ),
+  );
   return logItemElement;
 }
 
 function createModMessageElement(
   kind: ModMessageKind,
-  message: keyof Language,
+  message: ModMessageId,
   details: object | undefined,
-  _timestamp: Date,
-  language: Language,
+  timestamp: Date,
+  _language: Language,
 ): HTMLElement {
+  /*
   const messageElement = createModMessageElementByTemplate();
 
   const elements = {
@@ -97,6 +108,25 @@ function createModMessageElement(
     `mod-message-${kind.toLowerCase()}`,
   );
   return messageElement;
+  */
+
+  const logItemElement = document.createElement('span');
+  const reactRoot = ReactDOM.createRoot(logItemElement);
+  reactRoot.render(
+    createReactRootElement(
+      React.createElement(LogItemContainer, {
+        type: 'mod',
+        log: {
+          kind: kind,
+          messageId: message,
+          details: details,
+        },
+        timestamp: timestamp,
+      } satisfies LogItemModMessageContainerProps),
+      Environment.isDebug,
+    ),
+  );
+  return logItemElement;
 }
 
 function addLogItemCore(

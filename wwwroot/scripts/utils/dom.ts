@@ -1,3 +1,5 @@
+import React, { StrictMode } from 'react';
+
 let LogElement: HTMLElement | undefined;
 let LogItemTemplateElement: HTMLTemplateElement | undefined;
 let ModMessageTemplateElement: HTMLTemplateElement | undefined;
@@ -75,4 +77,13 @@ export async function busy<T>(promise: () => Promise<T>): Promise<T> {
   } finally {
     // 構築 DOM 破棄
   }
+}
+export function createReactRootElement(
+  rootElement: ReturnType<typeof React.createElement>,
+  isStrict: boolean,
+): ReturnType<typeof React.createElement> {
+  if (isStrict) {
+    return React.createElement(StrictMode, undefined, rootElement);
+  }
+  return rootElement;
 }
