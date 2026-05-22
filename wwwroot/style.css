@@ -17,19 +17,6 @@ body {
     sans-serif;
 }
 
-.toolbar {
-  display: flex;
-  gap: 1em;
-
-  .toolbar-group {
-    padding: 0.5em;
-  }
-
-  h1.toolbar-group {
-    font-size: 1em;
-  }
-}
-
 .log-container {
   background: #000;
   flex: 1 1 100%;
@@ -40,27 +27,28 @@ body {
     overflow: hidden;
 
     .mod-message {
+      margin: 0.5em;
       border: 1px solid #fff;
     }
 
-    .mod-message-notice {
+    .mod-message-kind-notice {
       color: #0f0;
     }
 
-    .mod-message-information {
+    .mod-message-kind-information {
       color: #0ff;
     }
 
-    .mod-message-warning {
+    .mod-message-kind-warning {
       color: #ff0;
     }
 
-    .mod-message-error {
+    .mod-message-kind-error {
       color: #f00;
     }
 
-    .log-item {
-      margin-right: 0.25ch;
+    .log-item + .log-item {
+      margin-left: 0.25ch;
     }
   }
 }

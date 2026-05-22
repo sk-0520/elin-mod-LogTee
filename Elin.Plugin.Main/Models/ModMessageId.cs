@@ -12,5 +12,6 @@ namespace Elin.Plugin.Main.Models
         StreamClientOpen,
         StreamClientStop,
         ApiTailFileNotFound,
+        FileUpload,
     }
 }

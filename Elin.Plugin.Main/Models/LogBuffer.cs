@@ -23,12 +23,12 @@ namespace Elin.Plugin.Main.Models
             SocketClientSetting = socketClientSetting;
             Timer = new System.Timers.Timer()
             {
-                Interval = TimeSpan.FromMilliseconds(250).TotalMilliseconds,
+                Interval = LogBufferSetting.LogFlushInterval,
             };
             if (SocketClientSetting.IsEnabled)
             {
                 ModHelper.WriteDev("socket client is enabled");
-                SocketClient = new SocketClient("localhost", SocketClientSetting.Port);
+                SocketClient = new SocketClient(SocketClientSetting.HostName, SocketClientSetting.Port);
             }
             Timer.Elapsed += Timer_Elapsed;
             LogItems = new List<LogItem>(logBufferSetting.Capacity);

@@ -144,7 +144,9 @@ jobs:
 
       - name: <Nodejs> Build
         shell: bash
-        run: npm run build
+        run: |
+          npm run lint
+          npm run build
 
       - name: Build
         shell: pwsh

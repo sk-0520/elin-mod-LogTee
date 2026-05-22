@@ -46,6 +46,7 @@ export const ModMessageIdScheme = z.enum([
   'mod.message.id.stream-client-start',
   'mod.message.id.stream-client-open',
   'mod.message.id.stream-client-stop',
+  'mod.message.id.file-upload',
   'mod.message.id.api-tail-file-not-found',
 ]);
 export type ModMessageId = z.infer<typeof ModMessageIdScheme>;
@@ -96,3 +97,72 @@ export interface TailKnownNotFoundResponse {
 export type TailUnknownResponse =
   | TailKnownSuccessResponse
   | TailKnownNotFoundResponse;
+
+export const SimpleResultResponseScheme = z.object({
+  success: z.boolean(),
+  details: z.object().nullable(),
+});
+export type SimpleResultResponse = z.infer<typeof SimpleResultResponseScheme>;
+
+//--------------------------------------------
+// Elin.Plugin.Main.Models.Settings.Setting.cs
+export const LogBufferSettingScheme = z.object({
+  capacity: z.number(),
+  logFlushLimit: z.number(),
+  logFlushInterval: z.number(),
+});
+export type LogBufferSetting = z.infer<typeof LogBufferSettingScheme>;
+
+export const LogFileSettingScheme = z.object({
+  isEnabled: z.boolean(),
+  filePath: z.string(),
+});
+export type LogFileSetting = z.infer<typeof LogFileSettingScheme>;
+
+export const SocketClientSettingScheme = z.object({
+  isEnabled: z.boolean(),
+  hostName: z.string(),
+  port: z.number(),
+});
+export type SocketClientSetting = z.infer<typeof SocketClientSettingScheme>;
+
+export const SocketServerSettingScheme = z.object({
+  isEnabled: z.boolean(),
+  port: z.number(),
+  capacity: z.number(),
+});
+export type SocketServerSetting = z.infer<typeof SocketServerSettingScheme>;
+
+export const WebServerSettingScheme = z.object({
+  isEnabled: z.boolean(),
+  port: z.number(),
+  openBrowserOnStartup: z.boolean(),
+});
+export type WebServerSetting = z.infer<typeof WebServerSettingScheme>;
+
+export const FrontendSettingScheme = z.object({
+  cssFontFamily: z.string(),
+  cssFontSize: z.string(),
+  elementLimit: z.number(),
+});
+export type FrontendSetting = z.infer<typeof FrontendSettingScheme>;
+
+export const SettingScheme = z.object({
+  logBuffer: LogBufferSettingScheme,
+  logFile: LogFileSettingScheme,
+  socketClient: SocketClientSettingScheme,
+  socketServer: SocketServerSettingScheme,
+  webServer: WebServerSettingScheme,
+  frontend: FrontendSettingScheme,
+});
+export type Setting = z.infer<typeof SettingScheme>;
+
+export const SettingResponseScheme = z.object({
+  setting: SettingScheme,
+});
+export type SettingResponse = z.infer<typeof SettingResponseScheme>;
+
+export const SettingRequestScheme = z.object({
+  setting: SettingScheme,
+});
+export type SettingRequest = z.infer<typeof SettingRequestScheme>;

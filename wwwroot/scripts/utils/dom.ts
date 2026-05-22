@@ -1,6 +1,7 @@
 let LogElement: HTMLElement | undefined;
 let LogItemTemplateElement: HTMLTemplateElement | undefined;
-let ModMessageTemplateElement: HTMLTemplateElement | undefined;
+let ModMessageTemplateWithDetailElement: HTMLTemplateElement | undefined;
+let ModMessageTemplateWithoutDetailElement: HTMLTemplateElement | undefined;
 
 export function ensureElementById(id: string): HTMLElement {
   const element = document.getElementById(id);
@@ -57,13 +58,25 @@ export function createLogItemElementByTemplate(): HTMLElement {
   return logItemElement;
 }
 
-export function createModMessageElementByTemplate(): HTMLElement {
-  ModMessageTemplateElement ??= ensureElementById(
-    'mod-message-template',
+export function createModMessageWithDetailElementByTemplate(): HTMLElement {
+  ModMessageTemplateWithDetailElement ??= ensureElementById(
+    'mod-message-template-with-detail',
   ) as HTMLTemplateElement;
-  const clonedElement = ModMessageTemplateElement.content.cloneNode(
+  const clonedElement = ModMessageTemplateWithDetailElement.content.cloneNode(
     true,
   ) as HTMLElement;
+  const modMessageElement = clonedElement.firstElementChild as HTMLElement;
+  return modMessageElement;
+}
+
+export function createModMessageWithoutDetailElementByTemplate(): HTMLElement {
+  ModMessageTemplateWithoutDetailElement ??= ensureElementById(
+    'mod-message-template-without-detail',
+  ) as HTMLTemplateElement;
+  const clonedElement =
+    ModMessageTemplateWithoutDetailElement.content.cloneNode(
+      true,
+    ) as HTMLElement;
   const modMessageElement = clonedElement.firstElementChild as HTMLElement;
   return modMessageElement;
 }

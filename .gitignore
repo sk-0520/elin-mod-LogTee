@@ -59,3 +59,4 @@ git-shell.bat
 node_modules
 /*/@Assets/wwwroot
 wwwroot/.env.development
+.swc

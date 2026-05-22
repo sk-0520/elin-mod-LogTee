@@ -1,4 +1,5 @@
 using Elin.Plugin.Main.Models.Impl;
+using Elin.Plugin.Main.PluginHelpers;
 using HarmonyLib;
 
 namespace Elin.Plugin.Main.Patches
@@ -12,14 +13,14 @@ namespace Elin.Plugin.Main.Patches
         [HarmonyPrefix]
         public static void InitPrefix(Scene __instance, Scene.Mode newMode)
         {
-            SceneImpl.InitPrefix(__instance, newMode, Plugin.Instance.LogBuffer!, Plugin.Instance.LogTimeProvider!);
+            SceneImpl.InitPrefix(__instance, newMode, ModHelper.Plugin.LogBuffer, ModHelper.Plugin.LogTimeProvider);
         }
 
         [HarmonyPatch(nameof(Scene.Init), new[] { typeof(Scene.Mode) })]
         [HarmonyPostfix]
         public static void InitPostfix(Scene __instance, Scene.Mode newMode)
         {
-            SceneImpl.InitPostfix(__instance, newMode, Plugin.Instance.LogBuffer!, Plugin.Instance.LogTimeProvider!);
+            SceneImpl.InitPostfix(__instance, newMode, ModHelper.Plugin.LogBuffer, ModHelper.Plugin.LogTimeProvider);
         }
 
 

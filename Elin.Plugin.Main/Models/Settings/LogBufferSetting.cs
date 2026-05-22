@@ -8,6 +8,7 @@ namespace Elin.Plugin.Main.Models.Settings
 
         int Capacity { get; }
         int LogFlushLimit { get; }
+        double LogFlushInterval { get; }
 
         #endregion
     }
@@ -21,6 +22,9 @@ namespace Elin.Plugin.Main.Models.Settings
 
         [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.LogBufferSettingLogFlushLimit), AllLanguage = true)]
         public virtual int LogFlushLimit { get; set; }
+
+        [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.LogBufferSettingLogFlushInterval), AllLanguage = true)]
+        public virtual double LogFlushInterval { get; set; }
 
         #endregion
     }

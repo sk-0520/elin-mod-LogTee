@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -72,36 +73,47 @@ namespace Elin.Plugin.Main.Models.Web
 
                 await StaticFileRunner.RunAsync(context, cancellationToken);
             }
+            catch (SocketException ex)
+            {
+                // ソケット系は多分何もできることはないので無視でよろし
+                ModHelper.WriteDev(ex);
+            }
             catch (Exception ex)
             {
-                if (ex is WebServerException webServerException)
+                // Web サーバーとしては落ちられると困るのでキャッチ内処理例外は握りつぶす
+                try
                 {
-                    context.Response.StatusCode = (int)webServerException.HttpStatusCode;
-                    context.Response.StatusDescription = webServerException.StatusDescription;
-                }
-                else
-                {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                }
+                    ModHelper.WriteDev(ex);
 
-                if (context.Response.StatusCode != (int)HttpStatusCode.NotFound)
-                {
-                    ModHelper.LogNotExpected(ex);
-                }
+                    // TODO: ヘッダ送信済みのフラグどっかないのか要調査
+                    if (ex is WebServerException webServerException)
+                    {
+                        context.Response.StatusCode = (int)webServerException.HttpStatusCode;
+                        context.Response.StatusDescription = webServerException.StatusDescription;
+                    }
 
-                if (isApi && ex is WebServerException webServerExceptionBody && webServerExceptionBody.Json is not null)
+                    if (context.Response.StatusCode != (int)HttpStatusCode.NotFound)
+                    {
+                        ModHelper.LogNotExpected(ex);
+                    }
+
+                    if (isApi && ex is WebServerException webServerExceptionBody && webServerExceptionBody.Json is not null)
+                    {
+                        context.Response.ContentType = "application/json";
+                        var json = JsonConvert.SerializeObject(webServerExceptionBody.Json, JsonSerializerSettings);
+                        var body = Encoding.UTF8.GetBytes(json);
+                        await context.Response.OutputStream.WriteAsync(body, 0, body.Length, cancellationToken);
+                    }
+                }
+                catch (Exception zombie)
                 {
-                    context.Response.ContentType = "application/json";
-                    var json = JsonConvert.SerializeObject(webServerExceptionBody.Json, JsonSerializerSettings);
-                    var body = Encoding.UTF8.GetBytes(json);
-                    await context.Response.OutputStream.WriteAsync(body, 0, body.Length, cancellationToken);
+                    ModHelper.LogNotExpected(zombie);
                 }
             }
             finally
             {
                 context.Response.Close();
             }
-
         }
 
         public async UniTask StartAsync()
@@ -116,7 +128,7 @@ namespace Elin.Plugin.Main.Models.Web
             while (HttpListener.IsListening)
             {
                 var context = await HttpListener.GetContextAsync();
-                UniTask.Create(async () => await ProcessAsync(context, CancellationTokenSource.Token)).Forget();
+                UniTask.RunOnThreadPool(async () => await ProcessAsync(context, CancellationTokenSource.Token)).Forget();
             }
         }
 

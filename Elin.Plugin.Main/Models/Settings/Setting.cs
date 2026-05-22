@@ -9,16 +9,24 @@ namespace Elin.Plugin.Main.Models.Settings
 
         internal static Setting Instance { get; set; } = new Setting();
 
-        public LogBufferSetting LogBufferSetting { get; set; } = new LogBufferSetting()
+        public LogBufferSetting LogBuffer { get; set; } = new LogBufferSetting()
         {
             Capacity = 32,
-            LogFlushLimit = 30,
+            LogFlushLimit = 32,
+            LogFlushInterval = 250,
         };
 
         public LogFileSetting LogFile { get; set; } = new LogFileSetting()
         {
             IsEnabled = false,
             FilePath = string.Empty
+        };
+
+        public SocketClientSetting SocketClient { get; set; } = new SocketClientSetting()
+        {
+            IsEnabled = true,
+            HostName = "localhost",
+            Port = 60100
         };
 
         public SocketServerSetting SocketServer { get; set; } = new SocketServerSetting()
@@ -28,17 +36,18 @@ namespace Elin.Plugin.Main.Models.Settings
             Capacity = 256,
         };
 
-        public SocketClientSetting SocketClient { get; set; } = new SocketClientSetting()
-        {
-            IsEnabled = true,
-            Port = 60100
-        };
-
         public WebServerSetting WebServer { get; set; } = new WebServerSetting()
         {
             IsEnabled = true,
             Port = 60080,
             OpenBrowserOnStartup = true,
+        };
+
+        public FrontendSetting Frontend { get; set; } = new FrontendSetting()
+        {
+            CssFontFamily = "sans-serif",
+            CssFontSize = "12pt",
+            ElementLimit = 4 * 1024,
         };
 
         #endregion

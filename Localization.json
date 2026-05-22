@@ -15,7 +15,7 @@
       "JP": "ソケットクライアントのポートが異なる",
       "EN": "Socket client port is different",
       "CN": "Socket客户端端口不同"
-    },
+    }
   },
   "format": {
     "SocketServerStartSkipped": {
@@ -40,6 +40,11 @@
       "EN": "Log buffer output limit",
       "CN": "日志缓冲输出限制"
     },
+    "LogBufferSettingLogFlushInterval": {
+      "JP": "ログバッファの出力間隔(msec)",
+      "EN": "Log buffer flush interval (msec)",
+      "CN": "日志缓冲刷新间隔(msec)"
+    },
 
     "LogFileSettingIsEnabled": {
       "JP": "ログファイル出力を有効にするか",
@@ -57,10 +62,15 @@
       "EN": "Enable socket client",
       "CN": "启用Socket客户端"
     },
+    "SocketClientSettingHostName": {
+      "JP": "ソケットクライアントの送信先ホスト名",
+      "EN": "Socket client destination host name",
+      "CN": "Socket客户端目标主机名"
+    },
     "SocketClientSettingPort": {
-      "JP": "ソケットクライアントのポート",
-      "EN": "Socket client port",
-      "CN": "Socket客户端端口"
+      "JP": "ソケットクライアントの送信先ポート",
+      "EN": "Socket client destination port",
+      "CN": "Socket客户端目标端口"
     },
 
     "SocketServerSettingIsEnabled": {
@@ -93,33 +103,6 @@
       "JP": "起動時にブラウザを開くか",
       "EN": "Open browser on startup",
       "CN": "启动时打开浏览器"
-    },
-
-    /* ModOptions 用に作ってたけど完成せず。名残として置いておく
-    "CommonIsEnabled": {
-      "JP": "有効",
-      "EN": "Enabled"
-    },
-    "LabelLogFile": {
-      "JP": "ファイル",
-      "EN": "File"
-    },
-    "LabelLogFilePath": {
-      "JP": "ファイルパス",
-      "EN": "File Path"
-    },
-    "LabelLogFilePathDescription": {
-      "JP": "${YEAR}, ${MONTH}, ${DAY}",
-      "EN": "${YEAR}, ${MONTH}, ${DAY}"
-    },
-    "LabelWebServer": {
-      "JP": "Webサーバー",
-      "EN": "Web Server"
-    },
-    "LabelWebServerPort": {
-      "JP": "ポート",
-      "EN": "Port"
     }
-  */
   }
 }

@@ -14,10 +14,11 @@ namespace Elin.Plugin.Main
     {
         #region property
 
-        public static Plugin Instance { get; private set; } = default!;
+        internal Setting SettingProxy { get; private set; } = default!;
+
         private SyncObject SyncObject { get; } = new SyncObject();
-        public LogBuffer? LogBuffer { get; private set; }
-        public ILogTimeProvider? LogTimeProvider { get; private set; }
+        public LogBuffer LogBuffer { get; private set; } = default!;
+        public ILogTimeProvider LogTimeProvider { get; private set; } = default!;
         private SocketServer? SocketServer { get; set; }
         private WebServer? WebServer { get; set; }
 
@@ -76,9 +77,11 @@ namespace Elin.Plugin.Main
         {
             // 起動時に各種設定値を確定させるためにクローン呼び出し
             // 実行中にポートやらを変えられると反映が面倒
-            var setting = Setting.Bind(Config, new Setting()).Clone();
+            // ただし設定の保存機能としての窓口として SettingProxy プロパティは使用する
+            SettingProxy = Setting.Bind(Config, new Setting());
+            var setting = SettingProxy.Clone();
             Setting.Instance = setting;
-            Instance = this;
+
             LogTimeProvider = new LogTimeProvider();
 
             if (CanExecuteSocketServer(setting, true))
@@ -87,7 +90,7 @@ namespace Elin.Plugin.Main
                 SocketServer.StartAsync().Forget();
             }
 
-            LogBuffer = new LogBuffer(LogTimeProvider, SyncObject, setting.LogBufferSetting, setting.LogFile, setting.SocketClient);
+            LogBuffer = new LogBuffer(LogTimeProvider, SyncObject, setting.LogBuffer, setting.LogFile, setting.SocketClient);
 
             if (setting.WebServer.IsEnabled)
             {

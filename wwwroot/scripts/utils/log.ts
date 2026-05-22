@@ -1,46 +1,17 @@
-import { get } from './access';
+import type { LogItem, ModMessage, ModMessageKind } from '../types/csharp';
+import { dump, get } from './access';
+import { convertStyleColor } from './converter';
 import {
   createLogItemElementByTemplate,
-  createModMessageElementByTemplate,
+  createModMessageWithDetailElementByTemplate,
+  createModMessageWithoutDetailElementByTemplate,
   ensureSelector,
   getLogElement,
 } from './dom';
 import type { Language } from './language';
-import type {
-  GameDateTime,
-  LogItem,
-  MessageColor,
-  ModMessage,
-  ModMessageKind,
-} from './types';
 
 const DefaultColor = '#fff';
 let LastColor: string | undefined;
-
-function convertStyleColor(color: MessageColor): string {
-  const { r, g, b, a } = color;
-  const styleColor = {
-    r: 255 * r,
-    g: 255 * g,
-    b: 255 * b,
-    a: a,
-  };
-
-  return `rgb(${styleColor.r} ${styleColor.g} ${styleColor.b} / ${styleColor.a})`;
-}
-
-function _convertGameTimestamp(timestamp: GameDateTime): string {
-  const { year, month, day, hour, minute, second } = timestamp;
-
-  const padded = {
-    month: String(month).padStart(2, '0'),
-    day: String(day).padStart(2, '0'),
-    hour: String(hour).padStart(2, '0'),
-    minute: String(minute).padStart(2, '0'),
-    second: String(second).padStart(2, '0'),
-  };
-  return `${year}/${padded.month}/${padded.day} ${padded.hour}:${padded.minute}:${padded.second}`;
-}
 
 function createLogItemElement(
   logItem: LogItem,
@@ -66,30 +37,27 @@ function createLogItemElement(
 
 function createModMessageElement(
   kind: ModMessageKind,
-  message: string,
+  message: keyof Language,
   details: object | undefined,
   _timestamp: Date,
   language: Language,
 ): HTMLElement {
-  const messageElement = createModMessageElementByTemplate();
+  const rootElement = details
+    ? createModMessageWithDetailElementByTemplate()
+    : createModMessageWithoutDetailElementByTemplate();
 
-  const elements = {
-    message: ensureSelector(messageElement, '.mod-message-message'),
-    detail: ensureSelector(messageElement, '.mod-message-detail'),
-  };
-
-  elements.message.textContent = language[message] ?? message;
+  const messageElement = ensureSelector(rootElement, '.mod-message-message');
+  messageElement.textContent = language[message];
   if (details) {
-    elements.detail.textContent = JSON.stringify(details, null, 2);
-  } else {
-    elements.detail.remove();
+    const detailElement = ensureSelector(rootElement, '.mod-message-detail');
+    detailElement.textContent = JSON.stringify(dump(details), null, 2);
   }
 
-  messageElement.classList.add(
+  rootElement.classList.add(
     'mod-message',
-    `mod-message-${kind.toLowerCase()}`,
+    `mod-message-kind-${kind.toLowerCase()}`,
   );
-  return messageElement;
+  return rootElement;
 }
 
 function addLogItemCore(

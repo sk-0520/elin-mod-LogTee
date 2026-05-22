@@ -71,7 +71,7 @@ namespace Elin.Plugin.Main.Models.Socket
 
                 ModHelper.WriteDev("Connection accepted.");
 
-                UniTask.Create(async () => await ProcessAsync(tcpClient, CancellationTokenSource.Token)).Forget();
+                UniTask.RunOnThreadPool(async () => await ProcessAsync(tcpClient, CancellationTokenSource.Token)).Forget();
             }
         }
 

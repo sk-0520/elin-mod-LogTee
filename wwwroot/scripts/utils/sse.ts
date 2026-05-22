@@ -1,30 +1,29 @@
+// SSE で一生データを受信するとブラウザが死ぬので制限する
+
+import { useModeStore } from '../stores/useModeStore';
+import { LogItemScheme } from '../types/csharp';
 import { dump } from './access';
 import { getLogElement } from './dom';
 import type { Language } from './language';
 import { addLogItem, addModMessage, removeHeadElements } from './log';
-import { setStatus } from './status';
-import { LogItemScheme } from './types';
-
-// SSE で一生データを受信するとブラウザが死ぬので制限する
-// ファイルアップロードに関しては一回きりとして制限しない方針
-const SseLogElementLimit = 4 * 1024;
 
 export class EventSourceReceiver {
   constructor(
     private readonly endpoint: string,
     private readonly target: 'socket' | 'file',
+    readonly elementLimit: number,
     private readonly language: Language,
   ) {
     this.eventSource = new EventSource(endpoint);
 
-    this.eventSource.addEventListener('open', (ev) => this.onOpen(ev));
-    this.eventSource.addEventListener('error', (ev) => this.onError(ev));
-    this.eventSource.addEventListener('message', (ev) => this.onMessage(ev));
+    this.eventSource.addEventListener('open', this.onOpen);
+    this.eventSource.addEventListener('error', this.onError);
+    this.eventSource.addEventListener('message', this.onMessage);
   }
 
   private eventSource: EventSource;
 
-  private onOpen(event: Event) {
+  private readonly onOpen = (event: Event) => {
     addModMessage(
       {
         kind: 'Notice',
@@ -37,9 +36,9 @@ export class EventSourceReceiver {
       },
       this.language,
     );
-  }
+  };
 
-  private onError(event: Event) {
+  private readonly onError = (event: Event) => {
     console.error('EventSource error', event);
     addModMessage(
       {
@@ -53,12 +52,17 @@ export class EventSourceReceiver {
       },
       this.language,
     );
-    setStatus('none', this.language);
-  }
+    useModeStore.getState().setMode('none');
+  };
 
-  private onMessage(event: MessageEvent) {
+  private readonly onMessage = (event: MessageEvent) => {
+    const state = useModeStore.getState();
+    if (state.mode === 'none') {
+      state.setMode(this.target === 'socket' ? 'stream-socket' : 'stream-file');
+    }
+
     this.doMessage(event.data);
-  }
+  };
 
   private doMessage(data: string) {
     console.debug('onMessage', data);
@@ -67,7 +71,7 @@ export class EventSourceReceiver {
       const logItem = LogItemScheme.parse(json);
 
       addLogItem(logItem, this.language);
-      removeHeadElements(getLogElement(), SseLogElementLimit);
+      removeHeadElements(getLogElement(), this.elementLimit);
     }
   }
 
