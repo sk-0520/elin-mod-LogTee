@@ -73,7 +73,7 @@ namespace Elin.Plugin.Main
         /// <summary>
         /// 起動時のプラグイン独自処理。
         /// </summary>
-        private void AwakePlugin()
+        protected override void AwakePlugin()
         {
             // 起動時に各種設定値を確定させるためにクローン呼び出し
             // 実行中にポートやらを変えられると反映が面倒
@@ -120,7 +120,7 @@ namespace Elin.Plugin.Main
         /// <para>通常の初期化は基本的に <see cref="AwakePlugin"/> で行う想定。</para>
         /// <para>ModHelp 用に <see cref="Start"/> を生やしたので本メソッドが追加されただけ。</para>
         /// </remarks>
-        private void StartPlugin()
+        protected override void StartPlugin()
         {
             //NOP
             var setting = Setting.Instance;
@@ -158,7 +158,7 @@ namespace Elin.Plugin.Main
         /// <summary>
         /// 終了時のプラグイン独自処理。
         /// </summary>
-        private void OnDestroyPlugin()
+        protected override void OnDestroyPlugin()
         {
             LogBuffer?.Dispose();
             SocketServer?.Dispose();

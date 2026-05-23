@@ -52,11 +52,12 @@ msbuild.wrn
 # 何や色々
 TestResult/
 TestResults/
-*.lnk
 git-shell.bat
-
-# この Mod はワケわからん処理がてんこ盛り
 node_modules
+*.lnk
+*.bak
+
+# 以下自由に
 /*/@Assets/wwwroot
 wwwroot/.env.development
 .swc

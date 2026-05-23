@@ -21,6 +21,15 @@ namespace Elin.Plugin.Main
         protected virtual void PrePHLPlugin(int reloadCount, string assemblyPath)
         { }
 
+        protected virtual void AwakePlugin()
+        { }
+
+        protected virtual void StartPlugin()
+        { }
+
+        protected virtual void OnDestroyPlugin()
+        { }
+
         #endregion
     }
 
