@@ -5,24 +5,24 @@ import { useLanguageStore } from '../../../stores/useLanguageStore';
 import { clearLog } from '../../../utils/log';
 
 export interface ClearButtonProps {
-  sx?: SxProps<Theme>;
+	sx?: SxProps<Theme>;
 }
 
 const ClearButton: FC<ClearButtonProps> = (props) => {
-  const { sx } = props;
-  const getText = useLanguageStore((a) => a.getText);
+	const { sx } = props;
+	const getText = useLanguageStore((a) => a.getText);
 
-  return (
-    <Button
-      sx={sx}
-      startIcon={<DeleteForeverIcon />}
-      onClick={() => {
-        clearLog();
-      }}
-    >
-      {getText('action.clear')}
-    </Button>
-  );
+	return (
+		<Button
+			sx={sx}
+			startIcon={<DeleteForeverIcon />}
+			onClick={() => {
+				clearLog();
+			}}
+		>
+			{getText('action.clear')}
+		</Button>
+	);
 };
 
 export default ClearButton;

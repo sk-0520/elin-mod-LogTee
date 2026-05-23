@@ -6,7 +6,7 @@
   "scripts": {
     "type": "tsc --noEmit",
     "build": "rspack build --mode production",
-    "lint": "biome check",
+    "lint": "biome ci",
     "dev": "rspack dev --mode development",
     "format": "biome check --write",
     "format-force": "biome check --write --unsafe",

@@ -3,39 +3,39 @@ import type { EnableStreamTarget, StreamTarget } from '../types/stream';
 import type { EventSourceReceiver } from '../utils/sse';
 
 export interface StreamState {
-  target: StreamTarget;
-  receiver: EventSourceReceiver | undefined;
+	target: StreamTarget;
+	receiver: EventSourceReceiver | undefined;
 }
 
 export interface StreamActions {
-  setReceiver: (
-    target: EnableStreamTarget,
-    receiver: EventSourceReceiver,
-  ) => void;
-  close(): void;
+	setReceiver: (
+		target: EnableStreamTarget,
+		receiver: EventSourceReceiver,
+	) => void;
+	close(): void;
 }
 
 export type StreamStore = StreamState & StreamActions;
 
 const DefaultState: StreamState = {
-  target: 'none',
-  receiver: undefined,
+	target: 'none',
+	receiver: undefined,
 };
 
 export const useStreamStore = create<StreamStore>()((set, get) => {
-  return {
-    ...DefaultState,
+	return {
+		...DefaultState,
 
-    setReceiver: (
-      target: EnableStreamTarget,
-      receiver: EventSourceReceiver,
-    ) => {
-      set({ target, receiver });
-    },
+		setReceiver: (
+			target: EnableStreamTarget,
+			receiver: EventSourceReceiver,
+		) => {
+			set({ target, receiver });
+		},
 
-    close: () => {
-      get().receiver?.cleanup();
-      set({ ...DefaultState });
-    },
-  };
+		close: () => {
+			get().receiver?.cleanup();
+			set({ ...DefaultState });
+		},
+	};
 });

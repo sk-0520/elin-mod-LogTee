@@ -7,30 +7,30 @@ import { useFrontendSettingStore } from './scripts/stores/useFrontendSetting';
 import ToolbarApp from './scripts/ToolbarApp';
 
 function createToolbarApp(): void {
-  // ツールバー側構築
-  const toolbarContainerElement = ReactDOM.createRoot(
-    ensureElementById('toolbar-app'),
-  );
+	// ツールバー側構築
+	const toolbarContainerElement = ReactDOM.createRoot(
+		ensureElementById('toolbar-app'),
+	);
 
-  toolbarContainerElement.render(
-    React.createElement(StrictMode, undefined, React.createElement(ToolbarApp)),
-  );
+	toolbarContainerElement.render(
+		React.createElement(StrictMode, undefined, React.createElement(ToolbarApp)),
+	);
 }
 
 function createApp(): void {
-  createToolbarApp();
+	createToolbarApp();
 }
 
 async function boot(): Promise<void> {
-  try {
-    // ToolbarContainer.tsx: useEffect内でやるべきなんだろうけど、ログ周りは react 関係なさすぎるので無理やり対応
-    const settingResult = await getSetting();
-    const setting = settingResult.setting;
-    useFrontendSettingStore.getState().setSetting(setting.frontend);
-  } catch (error) {
-    console.error('Failed to get setting', error);
-  }
+	try {
+		// ToolbarContainer.tsx: useEffect内でやるべきなんだろうけど、ログ周りは react 関係なさすぎるので無理やり対応
+		const settingResult = await getSetting();
+		const setting = settingResult.setting;
+		useFrontendSettingStore.getState().setSetting(setting.frontend);
+	} catch (error) {
+		console.error('Failed to get setting', error);
+	}
 
-  setTimeout(createApp, 0);
+	setTimeout(createApp, 0);
 }
 boot();

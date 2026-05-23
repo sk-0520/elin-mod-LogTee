@@ -1,54 +1,54 @@
 ﻿html {
-  margin: 0;
-  padding: 0;
+	margin: 0;
+	padding: 0;
 }
 body {
-  font-size: 12pt;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
+	font-size: 12pt;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
 
-  /* TODO: 多言語におけるフォント指定を知らない */
-  font-family: /* "Meiryo UI",
+	/* TODO: 多言語におけるフォント指定を知らない */
+	font-family: /* "Meiryo UI",
     "PingFang TC", "Microsoft JhengHei",
     "PingFang SC", "Microsoft YaHei", */
-    sans-serif;
+		sans-serif;
 }
 
 .log-container {
-  background: #000;
-  flex: 1 1 100%;
-  overflow: scroll;
-  padding: 1em;
+	background: #000;
+	flex: 1 1 100%;
+	overflow: scroll;
+	padding: 1em;
 
-  .log {
-    overflow: hidden;
+	.log {
+		overflow: hidden;
 
-    .mod-message {
-      margin: 0.5em;
-      border: 1px solid #fff;
-    }
+		.mod-message {
+			margin: 0.5em;
+			border: 1px solid #fff;
+		}
 
-    .mod-message-kind-notice {
-      color: #0f0;
-    }
+		.mod-message-kind-notice {
+			color: #0f0;
+		}
 
-    .mod-message-kind-information {
-      color: #0ff;
-    }
+		.mod-message-kind-information {
+			color: #0ff;
+		}
 
-    .mod-message-kind-warning {
-      color: #ff0;
-    }
+		.mod-message-kind-warning {
+			color: #ff0;
+		}
 
-    .mod-message-kind-error {
-      color: #f00;
-    }
+		.mod-message-kind-error {
+			color: #f00;
+		}
 
-    .log-item + .log-item {
-      margin-left: 0.25ch;
-    }
-  }
+		.log-item + .log-item {
+			margin-left: 0.25ch;
+		}
+	}
 }

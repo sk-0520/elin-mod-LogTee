@@ -33,7 +33,16 @@
         "editor.defaultFormatter": "biomejs.biome"
     },
     "[typescriptreact]": {
-                "editor.formatOnSave": true,
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.codeActionsOnSave": {
+            "quickfix.biome": "explicit",
+            "source.organizeImports.biome": "explicit"
+        },
+        "editor.defaultFormatter": "biomejs.biome"
+    },
+    "[json]": {
+        "editor.formatOnSave": true,
         "editor.formatOnPaste": true,
         "editor.codeActionsOnSave": {
             "quickfix.biome": "explicit",

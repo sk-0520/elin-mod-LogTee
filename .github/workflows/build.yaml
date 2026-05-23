@@ -142,14 +142,7 @@ jobs:
       - name: <Node.js> NPM install
         if: ${{ hashFiles('package.json') != '' }}
         shell: bash
-        run: npm ci --ignore-scripts
-
-      # Mod 独自処理
-      # ビルド処理は MSBuild 側で処理するのでここでは不要
-      - name: <Nodejs> Lint
-        shell: bash
-        run: |
-          npm run lint
+        run: npm ci
 
       - name: Build
         shell: pwsh
