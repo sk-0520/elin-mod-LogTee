@@ -142,11 +142,11 @@ jobs:
         shell: bash
         run: npm ci --ignore-scripts
 
-      - name: <Nodejs> Build
+      # ビルド処理は MSBuild 側で処理するのでここでは不要
+      - name: <Nodejs> Lint
         shell: bash
         run: |
           npm run lint
-          npm run build
 
       - name: Build
         shell: pwsh
