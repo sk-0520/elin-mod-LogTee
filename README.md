@@ -1,3 +1,5 @@
 # elin.log | tee
 
-とりあえず公開して一旦終わらせたい。
+<https://steamcommunity.com/sharedfiles/filedetails/?id=3727813285>
+
+ログを出力します。
