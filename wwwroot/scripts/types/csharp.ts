@@ -144,6 +144,7 @@ export const FrontendSettingScheme = z.object({
 	cssFontFamily: z.string(),
 	cssFontSize: z.string(),
 	elementLimit: z.number(),
+	highlight: z.string(),
 });
 export type FrontendSetting = z.infer<typeof FrontendSettingScheme>;
 

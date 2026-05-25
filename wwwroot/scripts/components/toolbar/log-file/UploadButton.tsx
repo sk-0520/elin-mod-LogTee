@@ -2,9 +2,10 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import type { FC } from 'react';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
-import { useModeStore } from '../../../stores/useModeStore';
-import { useStreamStore } from '../../../stores/useStreamStore';
+import { useFrontendSettingStore } from '../../../hooks/useFrontendSetting';
+import { useLanguageStore } from '../../../hooks/useLanguageStore';
+import { useModeStore } from '../../../hooks/useModeStore';
+import { useStreamStore } from '../../../hooks/useStreamStore';
 import { LogItemScheme } from '../../../types/csharp';
 import { get } from '../../../utils/access';
 import { addLogItems, addModMessage } from '../../../utils/log';
@@ -27,6 +28,7 @@ const UploadButton: FC = () => {
 	const getText = useLanguageStore((a) => a.getText);
 	const language = useLanguageStore((a) => a.language);
 	const mode = useModeStore((a) => a.mode);
+	const highlightSetting = useFrontendSettingStore((a) => a.highlight);
 
 	return (
 		<Button
@@ -64,7 +66,7 @@ const UploadButton: FC = () => {
 								},
 								language,
 							);
-							addLogItems(logItems, language);
+							addLogItems(logItems, highlightSetting, language);
 						}
 					} catch (ex) {
 						addModMessage(

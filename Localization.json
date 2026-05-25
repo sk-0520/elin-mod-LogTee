@@ -103,6 +103,12 @@
       "JP": "起動時にブラウザを開くか",
       "EN": "Open browser on startup",
       "CN": "启动时打开浏览器"
+    },
+
+    "FrontendSettingHighlight": {
+      "JP": "ログ強調設定, 手動での設定は未考慮",
+      "EN": "Log highlighting setting, manual configuration is not considered",
+      "CN": "日志高亮设置，手动配置未考虑"
     }
   }
 }

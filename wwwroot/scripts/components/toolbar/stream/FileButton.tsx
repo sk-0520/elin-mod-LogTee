@@ -3,11 +3,11 @@ import { Button, type SxProps, type Theme } from '@mui/material';
 import type { FC } from 'react';
 import getFileStream from '../../../api/getFileStream';
 import getTailApi from '../../../api/getTailApi';
-import { useBusyStore } from '../../../stores/useBusyStore';
-import { useFrontendSettingStore } from '../../../stores/useFrontendSetting';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
-import { useModeStore } from '../../../stores/useModeStore';
-import { useStreamStore } from '../../../stores/useStreamStore';
+import { useBusyStore } from '../../../hooks/useBusyStore';
+import { useFrontendSettingStore } from '../../../hooks/useFrontendSetting';
+import { useLanguageStore } from '../../../hooks/useLanguageStore';
+import { useModeStore } from '../../../hooks/useModeStore';
+import { useStreamStore } from '../../../hooks/useStreamStore';
 import { addLogItem, addModMessage } from '../../../utils/log';
 
 export interface FileButtonProps {
@@ -24,6 +24,7 @@ const FileButton: FC<FileButtonProps> = (props) => {
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 	const mode = useModeStore((a) => a.mode);
 	const frontendSetting = useFrontendSettingStore((a) => a.setting);
+	const highlightSetting = useFrontendSettingStore((a) => a.highlight);
 
 	return (
 		<Button
@@ -47,7 +48,7 @@ const FileButton: FC<FileButtonProps> = (props) => {
 
 					if (tailResult.mode === 'success') {
 						for (const logItem of tailResult.data.logItems) {
-							addLogItem(logItem, language);
+							addLogItem(logItem, highlightSetting, language);
 						}
 					} else {
 						addModMessage(
@@ -66,6 +67,7 @@ const FileButton: FC<FileButtonProps> = (props) => {
 					await busyBlock(async () => {
 						const stream = getFileStream(
 							frontendSetting.elementLimit,
+							highlightSetting,
 							language,
 						);
 						setReceiver('file', stream);

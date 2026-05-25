@@ -1,7 +1,7 @@
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { Button, type SxProps, type Theme } from '@mui/material';
 import type { FC } from 'react';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
+import { useLanguageStore } from '../../../hooks/useLanguageStore';
 import { clearLog } from '../../../utils/log';
 
 export interface ClearButtonProps {

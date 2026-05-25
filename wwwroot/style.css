@@ -50,5 +50,28 @@ body {
 		.log-item + .log-item {
 			margin-left: 0.25ch;
 		}
+
+		.log-item-highlight-inline {
+			display: inline-block;
+			font-weight: bold;
+			border-width: 1px;
+			border-style: solid;
+			padding: 0.25em;
+		}
+
+		.log-item-highlight-block {
+			display: block;
+			margin: 0.5em;
+			font-weight: bold;
+			border-width: 3px;
+			border-style: double;
+			padding: 0.25em;
+			text-align: center;
+		}
+
+		.log-item-highlight-popup {
+			border-bottom-width: 1px;
+			border-bottom-style: dotted;
+		}
 	}
 }

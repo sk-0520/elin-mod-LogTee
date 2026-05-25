@@ -1,9 +1,9 @@
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import { Button, type SxProps, type Theme } from '@mui/material';
 import type { FC } from 'react';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
-import { useModeStore } from '../../../stores/useModeStore';
-import { useStreamStore } from '../../../stores/useStreamStore';
+import { useLanguageStore } from '../../../hooks/useLanguageStore';
+import { useModeStore } from '../../../hooks/useModeStore';
+import { useStreamStore } from '../../../hooks/useStreamStore';
 
 export interface StopButtonProps {
 	sx?: SxProps<Theme>;

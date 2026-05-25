@@ -1,4 +1,14 @@
-import type { LogItem, ModMessage, ModMessageKind } from '../types/csharp';
+import { usePopupStore } from '../hooks/usePopupStore';
+import {
+	type LogItem,
+	LogItemScheme,
+	type ModMessage,
+	type ModMessageKind,
+} from '../types/csharp';
+import type {
+	ParsedHighlightItemSetting,
+	ParsedHighlightSetting,
+} from '../types/highlight';
 import { dump, get } from './access';
 import { convertStyleColor } from './converter';
 import {
@@ -13,9 +23,64 @@ import type { Language } from './language';
 const DefaultColor = '#fff';
 let LastColor: string | undefined;
 
+function hitHighlight(
+	text: string,
+	highlightSetting: ParsedHighlightSetting,
+): ParsedHighlightItemSetting | undefined {
+	for (const highlightItem of highlightSetting.items) {
+		if (highlightItem.match === 'regex') {
+			if (highlightItem.regex.test(text)) {
+				return highlightItem;
+			}
+		} else {
+			const sourceText = highlightItem.ignoreCase ? text.toLowerCase() : text;
+			const patternText = highlightItem.ignoreCase
+				? highlightItem.text.toLowerCase()
+				: highlightItem.text;
+
+			switch (highlightItem.match) {
+				case 'contains':
+					if (sourceText.includes(patternText)) {
+						return highlightItem;
+					}
+					break;
+
+				case 'startsWith':
+					if (sourceText.startsWith(patternText)) {
+						return highlightItem;
+					}
+					break;
+
+				case 'endsWith':
+					if (sourceText.endsWith(patternText)) {
+						return highlightItem;
+					}
+					break;
+
+				case 'equals':
+					if (sourceText === patternText) {
+						return highlightItem;
+					}
+					break;
+
+				default:
+					// @ts-expect-error
+					throw new Error(highlightItem.match);
+			}
+		}
+	}
+
+	return undefined;
+}
+
+export function getLogItemId(uuid: string): string {
+	return `log-item-${uuid}`;
+}
+
 function createLogItemElement(
 	logItem: LogItem,
 	color: string,
+	highlightSetting: ParsedHighlightSetting,
 	_language: Language,
 ): HTMLElement | undefined {
 	if (logItem.message.kind === 'NewLine') {
@@ -28,9 +93,33 @@ function createLogItemElement(
 
 	const logItemElement = createLogItemElementByTemplate();
 
+	logItemElement.id = getLogItemId(logItem.uuid);
 	logItemElement.style.color = color;
 	// TODO: まぁローカルで脆弱性があるだけなので、勘弁してくれ
 	logItemElement.innerHTML = logItem.message.message;
+	logItemElement.dataset.log = JSON.stringify(logItem);
+
+	// ハイライト
+	const highlightItem = hitHighlight(logItem.message.message, highlightSetting);
+	if (highlightItem) {
+		switch (highlightItem.display) {
+			case 'inline':
+				logItemElement.classList.add('log-item-highlight-inline');
+				logItemElement.style.borderColor = color;
+				break;
+
+			case 'block':
+				logItemElement.classList.add('log-item-highlight-block');
+				logItemElement.style.borderColor = color;
+				break;
+
+			case 'popup':
+				logItemElement.classList.add('log-item-highlight-popup');
+				logItemElement.style.borderColor = color;
+				usePopupStore.getState().enqueueLog(logItem);
+				break;
+		}
+	}
 
 	return logItemElement;
 }
@@ -62,6 +151,7 @@ function createModMessageElement(
 
 function addLogItemCore(
 	logItem: LogItem,
+	highlightSetting: ParsedHighlightSetting,
 	language: Language,
 ): HTMLElement | undefined {
 	const logElement = getLogElement();
@@ -92,6 +182,7 @@ function addLogItemCore(
 	const logItemElement = createLogItemElement(
 		logItem,
 		LastColor ?? DefaultColor,
+		highlightSetting,
 		language,
 	);
 	if (logItemElement) {
@@ -108,17 +199,25 @@ function addLogItemCore(
 	return undefined;
 }
 
-export function addLogItem(logItem: LogItem, language: Language) {
-	const element = addLogItemCore(logItem, language);
+export function addLogItem(
+	logItem: LogItem,
+	highlightSetting: ParsedHighlightSetting,
+	language: Language,
+) {
+	const element = addLogItemCore(logItem, highlightSetting, language);
 	if (element) {
 		element.scrollIntoView();
 	}
 }
 
-export function addLogItems(logItems: LogItem[], language: Language) {
+export function addLogItems(
+	logItems: LogItem[],
+	highlightSetting: ParsedHighlightSetting,
+	language: Language,
+) {
 	let lastElement: HTMLElement | undefined;
 	for (const logItem of logItems) {
-		const element = addLogItemCore(logItem, language);
+		const element = addLogItemCore(logItem, highlightSetting, language);
 		if (element) {
 			lastElement = element;
 		}
@@ -144,11 +243,25 @@ export function addModMessage(message: ModMessage, language: Language) {
 export function clearLog() {
 	const logElement = getLogElement();
 	logElement.textContent = '';
+	usePopupStore.getState().clearLogs();
 }
 
 export function removeHeadElements(target: HTMLElement, limit: number) {
 	while (limit < target.childElementCount) {
-		console.debug({ firstChild: target.firstChild });
-		target.firstChild?.remove();
+		console.debug({ firstElementChild: target.firstElementChild });
+		const firstElementChild = target.firstElementChild;
+		if (firstElementChild) {
+			if (firstElementChild instanceof HTMLElement) {
+				const rawLog = firstElementChild.dataset.log;
+				if (rawLog) {
+					const result = LogItemScheme.safeParse(JSON.parse(rawLog));
+					if (result.success) {
+						const logItem = result.data;
+						usePopupStore.getState().removeLog(logItem.uuid);
+					}
+				}
+			}
+			firstElementChild.remove();
+		}
 	}
 }

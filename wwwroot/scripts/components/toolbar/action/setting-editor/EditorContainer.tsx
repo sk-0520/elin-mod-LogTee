@@ -1,3 +1,7 @@
+import AddIcon from '@mui/icons-material/Add';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {
 	Box,
 	Button,
@@ -9,38 +13,122 @@ import {
 	DialogTitle,
 	FormControl,
 	FormControlLabel,
+	IconButton,
+	InputLabel,
+	MenuItem,
+	Select,
+	type SelectProps,
 	TextField,
 	type TextFieldProps,
 	Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import type { FC } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import postSetting from '../../../../api/postSetting';
-import { useErrorNotifyStore } from '../../../../stores/useErrorNotifyStore';
-import { useLanguageStore } from '../../../../stores/useLanguageStore';
+import { useErrorNotifyStore } from '../../../../hooks/useErrorNotifyStore';
+import { useLanguageStore } from '../../../../hooks/useLanguageStore';
 import type { Setting } from '../../../../types/csharp';
+import {
+	HighlightDisplaySchema,
+	HighlightMatchSchema,
+	type HighlightSetting,
+	type HighlightSettingItem,
+	type HighlightSettingWithId,
+} from '../../../../types/highlight';
+import {
+	ruleMax,
+	ruleMin,
+	rulesRequired as ruleRequired,
+} from '../../../../utils/forms';
+import { format } from '../../../../utils/language';
+import {
+	HighlightDefaultPopupLimit,
+	parseHighlightSetting,
+} from '../../../../utils/setting';
 import EditorGroup from './EditorGroup';
+import ErrorMessage from './ErrorMessage';
 import ResetButton from './ResetButton';
 import SettingDescription from './SettingDescription';
 
 const StyledTextField = styled((props: TextFieldProps) => (
-	<TextField size="small" {...props} />
+	<TextField {...props} size="small" />
 ))((_) => ({}));
 
-const StyledNumberTextField = styled((props: TextFieldProps) => (
-	<StyledTextField type="number" {...props} />
-))((_) => ({
+interface ControllerRenderProps {
+	onChange: (...event: unknown[]) => void;
+	onBlur: () => void;
+}
+
+const StyledNumberTextField = styled(
+	(props: TextFieldProps & ControllerRenderProps) => (
+		<StyledTextField
+			{...props}
+			type="number"
+			onChange={(e) => {
+				const v = e.target.value;
+				const v2 = Number(v);
+				props.onChange(v2);
+			}}
+		/>
+	),
+)((_) => ({
 	input: {
 		textAlign: 'right',
 	},
 }));
 
+const StyledSelect = styled((props: SelectProps) => (
+	<FormControl>
+		<InputLabel id={props.labelId}>{props.label}</InputLabel>
+		<Select {...props} size="small" />
+	</FormControl>
+))((_) => ({}));
+
 const StyledCheckbox = styled((props: CheckboxProps) => (
-	<Checkbox size="small" {...props} />
+	<Checkbox {...props} size="small" />
 ))((_) => ({
 	padding: '4px',
 }));
+
+type SettingFormData = Setting & {
+	highlight: {
+		popupLimit: number;
+		items: HighlightSettingWithId[];
+	};
+};
+
+type HighlightItemAddMode = 'head' | 'tail';
+
+const ValidationRules = {
+	intMax: 2147483647,
+	portMin: 0,
+	portMax: 65535,
+} as const;
+
+function parseParsedHighlightSetting(
+	rawHighlight: string,
+): SettingFormData['highlight'] {
+	if (rawHighlight) {
+		const parsed = parseHighlightSetting(rawHighlight);
+
+		return {
+			popupLimit: parsed.popupLimit,
+			items: parsed.items.map((a) => ({
+				id: crypto.randomUUID(),
+				display: a.display,
+				match: a.match,
+				ignoreCase: a.ignoreCase,
+				pattern: a.match === 'regex' ? a.regex.source : a.text,
+			})),
+		};
+	}
+
+	return {
+		popupLimit: HighlightDefaultPopupLimit,
+		items: [],
+	};
+}
 
 export interface EditorContainerProps {
 	setting: Setting;
@@ -49,16 +137,64 @@ export interface EditorContainerProps {
 
 const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const { setting, onCancel } = props;
+	const language = useLanguageStore((a) => a.language);
 	const getText = useLanguageStore((a) => a.getText);
 	const setError = useErrorNotifyStore((a) => a.setError);
-	const { control, handleSubmit } = useForm<Setting>({
-		defaultValues: setting,
+	const { control, watch, handleSubmit } = useForm<SettingFormData>({
+		defaultValues: {
+			...setting,
+			highlight: parseParsedHighlightSetting(setting.frontend.highlight),
+		},
 	});
 
-	const onSubmit = async (data: Setting) => {
-		console.log(data);
+	const { insert, append, remove, move } = useFieldArray({
+		control,
+		name: 'highlight.items',
+	});
+
+	const handleAddHighlightItem = (
+		data: HighlightSettingItem,
+		mode: HighlightItemAddMode,
+	) => {
+		const newItem: HighlightSettingWithId = {
+			id: crypto.randomUUID(),
+			display: data.display,
+			match: data.match,
+			ignoreCase: data.ignoreCase,
+			pattern: data.pattern,
+		};
+		if (mode === 'head') {
+			insert(0, newItem);
+		} else {
+			append(newItem);
+		}
+	};
+
+	const handleAddNewHighlightItem = (mode: HighlightItemAddMode) => {
+		handleAddHighlightItem(
+			{
+				display: 'inline',
+				match: 'contains',
+				ignoreCase: true,
+				pattern: '',
+			},
+			mode,
+		);
+	};
+
+	const onSubmit = async (data: SettingFormData) => {
 		try {
-			await postSetting(data);
+			const { highlight, ...apiData } = data;
+			apiData.frontend.highlight = JSON.stringify({
+				popupLimit: highlight.popupLimit,
+				items: highlight.items.map((a) => ({
+					display: a.display,
+					match: a.match,
+					ignoreCase: a.ignoreCase,
+					pattern: a.pattern,
+				})),
+			} satisfies HighlightSetting);
+			await postSetting(apiData);
 			// 全部初期化すべし
 			// 細かい状態管理をしていないのでこれでよろし
 			location.reload();
@@ -81,10 +217,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="logBuffer.capacity"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(true, language),
+										...ruleMin(1, language),
+										...ruleMax(ValidationRules.intMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.logBuffer.capacity')}
 											{...field}
+											label={getText('setting.editor.logBuffer.capacity')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -92,10 +235,20 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="logBuffer.logFlushLimit"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(true, language),
+										...ruleMin(
+											Math.max(watch('logBuffer.capacity'), 1),
+											language,
+										),
+										...ruleMax(ValidationRules.intMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.logBuffer.logFlushLimit')}
 											{...field}
+											label={getText('setting.editor.logBuffer.logFlushLimit')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -103,12 +256,22 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="logBuffer.logFlushInterval"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(true, language),
+										...ruleMin(
+											Math.max(watch('logBuffer.capacity'), 1),
+											language,
+										),
+										...ruleMax(ValidationRules.intMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
+											{...field}
 											label={getText(
 												'setting.editor.logBuffer.logFlushInterval',
 											)}
-											{...field}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -125,7 +288,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field }) => (
 										<FormControlLabel
 											control={
-												<StyledCheckbox checked={field.value} {...field} />
+												<StyledCheckbox {...field} checked={field.value} />
 											}
 											label={getText('setting.editor.logFile.isEnabled')}
 										/>
@@ -135,10 +298,15 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="logFile.filePath"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(watch('logFile.isEnabled'), language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledTextField
-											label={getText('setting.editor.logFile.filePath')}
 											{...field}
+											label={getText('setting.editor.logFile.filePath')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -155,7 +323,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field }) => (
 										<FormControlLabel
 											control={
-												<StyledCheckbox checked={field.value} {...field} />
+												<StyledCheckbox {...field} checked={field.value} />
 											}
 											label={getText('setting.editor.socketClient.isEnabled')}
 										/>
@@ -165,10 +333,15 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="socketClient.hostName"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(watch('socketClient.isEnabled'), language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledTextField
-											label={getText('setting.editor.socketClient.hostName')}
 											{...field}
+											label={getText('setting.editor.socketClient.hostName')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -176,10 +349,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="socketClient.port"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(watch('socketClient.isEnabled'), language),
+										...ruleMin(ValidationRules.portMin, language),
+										...ruleMax(ValidationRules.portMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.socketClient.port')}
 											{...field}
+											label={getText('setting.editor.socketClient.port')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -196,7 +376,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field }) => (
 										<FormControlLabel
 											control={
-												<StyledCheckbox checked={field.value} {...field} />
+												<StyledCheckbox {...field} checked={field.value} />
 											}
 											label={getText('setting.editor.socketServer.isEnabled')}
 										/>
@@ -205,10 +385,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="socketServer.port"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(watch('socketServer.isEnabled'), language),
+										...ruleMin(ValidationRules.portMin, language),
+										...ruleMax(ValidationRules.portMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.socketServer.port')}
 											{...field}
+											label={getText('setting.editor.socketServer.port')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -216,10 +403,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="socketServer.capacity"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(watch('socketServer.isEnabled'), language),
+										...ruleMin(1, language),
+										...ruleMax(ValidationRules.intMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.socketServer.capacity')}
 											{...field}
+											label={getText('setting.editor.socketServer.capacity')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -236,7 +430,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field }) => (
 										<FormControlLabel
 											control={
-												<StyledCheckbox checked={field.value} {...field} />
+												<StyledCheckbox {...field} checked={field.value} />
 											}
 											label={getText('setting.editor.webServer.isEnabled')}
 										/>
@@ -245,10 +439,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="webServer.port"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(watch('webServer.isEnabled'), language),
+										...ruleMin(ValidationRules.portMin, language),
+										...ruleMax(ValidationRules.portMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.webServer.port')}
 											{...field}
+											label={getText('setting.editor.webServer.port')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -259,7 +460,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field }) => (
 										<FormControlLabel
 											control={
-												<StyledCheckbox checked={field.value} {...field} />
+												<StyledCheckbox {...field} checked={field.value} />
 											}
 											label={getText(
 												'setting.editor.webServer.openBrowserOnStartup',
@@ -276,11 +477,13 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="frontend.cssFontFamily"
 									control={control}
-									render={({ field }) => (
+									render={({ field, fieldState }) => (
 										<StyledTextField
+											{...field}
 											label={getText('setting.editor.frontend.cssFontFamily')}
 											fullWidth
-											{...field}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -288,10 +491,12 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="frontend.cssFontSize"
 									control={control}
-									render={({ field }) => (
+									render={({ field, fieldState }) => (
 										<StyledTextField
-											label={getText('setting.editor.frontend.cssFontSize')}
 											{...field}
+											label={getText('setting.editor.frontend.cssFontSize')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
@@ -299,17 +504,197 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<Controller
 									name="frontend.elementLimit"
 									control={control}
-									render={({ field }) => (
+									rules={{
+										...ruleRequired(true, language),
+										...ruleMin(1, language),
+										...ruleMax(ValidationRules.intMax, language),
+									}}
+									render={({ field, fieldState }) => (
 										<StyledNumberTextField
-											label={getText('setting.editor.frontend.elementLimit')}
 											{...field}
+											label={getText('setting.editor.frontend.elementLimit')}
+											error={!!fieldState.error}
+											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
 									)}
 								/>
 
-								<SettingDescription>
-									{getText('setting.editor.frontend.description')}
-								</SettingDescription>
+								<EditorGroup
+									title={getText('setting.editor.frontend.highlight.title')}
+								>
+									<Controller
+										name="highlight.popupLimit"
+										control={control}
+										rules={{
+											...ruleRequired(true, language),
+											...ruleMin(1, language),
+											...ruleMax(100, language),
+										}}
+										render={({ field, fieldState }) => (
+											<StyledNumberTextField
+												{...field}
+												label={getText(
+													'setting.editor.frontend.highlight.popupLimit.title',
+												)}
+												error={!!fieldState.error}
+												helperText={<ErrorMessage fieldState={fieldState} />}
+											/>
+										)}
+									/>
+
+									<Button
+										startIcon={<AddIcon />}
+										onClick={() => handleAddNewHighlightItem('head')}
+									>
+										{getText('setting.editor.frontend.highlight.addItem')}
+									</Button>
+
+									{watch('highlight.items').map((a, index) => (
+										<EditorGroup key={a.id} title={`${index + 1}`}>
+											<Controller
+												name={`highlight.items.${index}.display`}
+												control={control}
+												render={({ field }) => (
+													<StyledSelect
+														{...field}
+														label={getText(
+															'setting.editor.frontend.highlight.item.display.title',
+														)}
+														labelId="setting.editor.frontend.highlight.item.display.title"
+													>
+														{HighlightDisplaySchema.options.map((b) => (
+															<MenuItem key={b} value={b}>
+																{getText(
+																	`setting.editor.frontend.highlight.item.display.enum.${b}`,
+																)}
+															</MenuItem>
+														))}
+													</StyledSelect>
+												)}
+											/>
+
+											<Controller
+												name={`highlight.items.${index}.match`}
+												control={control}
+												render={({ field }) => (
+													<StyledSelect
+														{...field}
+														label={getText(
+															'setting.editor.frontend.highlight.item.match.title',
+														)}
+														labelId="setting.editor.frontend.highlight.item.match.title"
+													>
+														{HighlightMatchSchema.options.map((b) => (
+															<MenuItem key={b} value={b}>
+																{getText(
+																	`setting.editor.frontend.highlight.item.match.enum.${b}`,
+																)}
+															</MenuItem>
+														))}
+													</StyledSelect>
+												)}
+											/>
+
+											<Controller
+												name={`highlight.items.${index}.pattern`}
+												control={control}
+												rules={{
+													...ruleRequired(true, language),
+													validate: (value) => {
+														if (
+															watch(`highlight.items.${index}.match`) ===
+															'regex'
+														) {
+															try {
+																new RegExp(value);
+															} catch (ex) {
+																return format(
+																	getText('validation.regex.format'),
+																	{ VALUE: (ex as Error).message },
+																);
+															}
+														}
+													},
+												}}
+												render={({ field, fieldState }) => (
+													<StyledTextField
+														{...field}
+														label={getText(
+															'setting.editor.frontend.highlight.item.pattern.title',
+														)}
+														error={!!fieldState.error}
+														helperText={
+															<ErrorMessage fieldState={fieldState} />
+														}
+													/>
+												)}
+											/>
+
+											<Controller
+												name={`highlight.items.${index}.ignoreCase`}
+												control={control}
+												render={({ field }) => (
+													<FormControlLabel
+														control={
+															<StyledCheckbox
+																{...field}
+																checked={field.value}
+															/>
+														}
+														label={getText(
+															'setting.editor.frontend.highlight.item.ignoreCase.title',
+														)}
+													/>
+												)}
+											/>
+
+											<Box
+												sx={{
+													display: 'flex',
+													justifyContent: 'space-between',
+												}}
+											>
+												<Box>
+													<IconButton
+														disabled={index === 0}
+														onClick={() => move(index, index - 1)}
+													>
+														<ArrowUpwardIcon />
+													</IconButton>
+													<IconButton
+														disabled={
+															index === watch('highlight.items').length - 1
+														}
+														onClick={() => move(index, index + 1)}
+													>
+														<ArrowDownwardIcon />
+													</IconButton>
+												</Box>
+												<Box>
+													<IconButton
+														color="warning"
+														onClick={() => remove(index)}
+													>
+														<DeleteForeverIcon />
+													</IconButton>
+												</Box>
+											</Box>
+										</EditorGroup>
+									))}
+
+									{0 < watch('highlight.items').length && (
+										<Button
+											startIcon={<AddIcon />}
+											onClick={() => handleAddNewHighlightItem('tail')}
+										>
+											{getText('setting.editor.frontend.highlight.addItem')}
+										</Button>
+									)}
+
+									<SettingDescription>
+										{getText('setting.editor.frontend.highlight.description')}
+									</SettingDescription>
+								</EditorGroup>
 							</EditorGroup>
 							{/* <pre>{JSON.stringify(setting, null, 2)}</pre> */}
 						</Container>

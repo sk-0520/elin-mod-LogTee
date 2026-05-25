@@ -7,9 +7,9 @@ import {
 } from '@mui/material';
 import { type FC, useState } from 'react';
 import postSettingReset from '../../../../api/postSettingReset';
-import { useBusyStore } from '../../../../stores/useBusyStore';
-import { useErrorNotifyStore } from '../../../../stores/useErrorNotifyStore';
-import { useLanguageStore } from '../../../../stores/useLanguageStore';
+import { useBusyStore } from '../../../../hooks/useBusyStore';
+import { useErrorNotifyStore } from '../../../../hooks/useErrorNotifyStore';
+import { useLanguageStore } from '../../../../hooks/useLanguageStore';
 
 const StyledDialogActionButton = styled(Button)({
 	flex: 1,

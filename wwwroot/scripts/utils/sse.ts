@@ -1,7 +1,8 @@
 // SSE で一生データを受信するとブラウザが死ぬので制限する
 
-import { useModeStore } from '../stores/useModeStore';
+import { useModeStore } from '../hooks/useModeStore';
 import { LogItemScheme } from '../types/csharp';
+import type { ParsedHighlightSetting } from '../types/highlight';
 import { dump } from './access';
 import { getLogElement } from './dom';
 import type { Language } from './language';
@@ -12,6 +13,7 @@ export class EventSourceReceiver {
 		private readonly endpoint: string,
 		private readonly target: 'socket' | 'file',
 		readonly elementLimit: number,
+		private readonly highlightSetting: ParsedHighlightSetting,
 		private readonly language: Language,
 	) {
 		this.eventSource = new EventSource(endpoint);
@@ -70,7 +72,7 @@ export class EventSourceReceiver {
 			const json = JSON.parse(data);
 			const logItem = LogItemScheme.parse(json);
 
-			addLogItem(logItem, this.language);
+			addLogItem(logItem, this.highlightSetting, this.language);
 			removeHeadElements(getLogElement(), this.elementLimit);
 		}
 	}

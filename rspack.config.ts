@@ -83,6 +83,20 @@ export default defineConfig({
 			},
 		],
 	},
+	devServer: {
+		hot: true,
+		open: true,
+		client: {
+			webSocketURL: {
+				hostname: '0.0.0.0',
+				pathname: '/ws',
+				password: 'dev-server',
+				port: 8080,
+				protocol: 'ws',
+				username: 'rspack',
+			},
+		},
+	},
 	plugins: [
 		isDev && new PreactRefreshPlugin({}),
 		isDev && new rspack.HotModuleReplacementPlugin(),

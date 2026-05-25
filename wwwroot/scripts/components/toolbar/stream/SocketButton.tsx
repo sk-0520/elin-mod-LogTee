@@ -2,11 +2,11 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { Button, type SxProps, type Theme } from '@mui/material';
 import type { FC } from 'react';
 import getSocketStream from '../../../api/getSocketStream';
-import { useBusyStore } from '../../../stores/useBusyStore';
-import { useFrontendSettingStore } from '../../../stores/useFrontendSetting';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
-import { useModeStore } from '../../../stores/useModeStore';
-import { useStreamStore } from '../../../stores/useStreamStore';
+import { useBusyStore } from '../../../hooks/useBusyStore';
+import { useFrontendSettingStore } from '../../../hooks/useFrontendSetting';
+import { useLanguageStore } from '../../../hooks/useLanguageStore';
+import { useModeStore } from '../../../hooks/useModeStore';
+import { useStreamStore } from '../../../hooks/useStreamStore';
 import { addModMessage } from '../../../utils/log';
 export interface SocketButtonProps {
 	sx?: SxProps<Theme>;
@@ -22,6 +22,7 @@ const SocketButton: FC<SocketButtonProps> = (props) => {
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 	const mode = useModeStore((a) => a.mode);
 	const frontendSetting = useFrontendSettingStore((a) => a.setting);
+	const highlightSetting = useFrontendSettingStore((a) => a.highlight);
 
 	return (
 		<Button
@@ -46,6 +47,7 @@ const SocketButton: FC<SocketButtonProps> = (props) => {
 					await busyBlock(async () => {
 						const stream = getSocketStream(
 							frontendSetting.elementLimit,
+							highlightSetting,
 							language,
 						);
 						setReceiver('socket', stream);

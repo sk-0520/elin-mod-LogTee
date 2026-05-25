@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { type FC, useEffect } from 'react';
-import { useLanguageStore } from '../../stores/useLanguageStore';
+import { useLanguageStore } from '../../hooks/useLanguageStore';
 import { ensureElementById } from '../../utils/dom';
 import { getBrowserLanguage, getLanguage } from '../../utils/language';
 import { getQuery } from '../../utils/query';

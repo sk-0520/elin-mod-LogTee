@@ -1,7 +1,7 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import type { FC } from 'react';
-import { useLanguageStore } from '../../../../stores/useLanguageStore';
+import { useLanguageStore } from '../../../../hooks/useLanguageStore';
 
 export interface SettingDescriptionProps {
 	children: React.ReactNode;

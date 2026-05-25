@@ -8,8 +8,8 @@ import {
 } from '@mui/material';
 import { JsonEditor } from 'json-edit-react';
 import type { FC } from 'react';
-import { useErrorNotifyStore } from '../../stores/useErrorNotifyStore';
-import { useLanguageStore } from '../../stores/useLanguageStore';
+import { useErrorNotifyStore } from '../../hooks/useErrorNotifyStore';
+import { useLanguageStore } from '../../hooks/useLanguageStore';
 
 const ErrorDialog: FC = () => {
 	const errorNotifyStore = useErrorNotifyStore();

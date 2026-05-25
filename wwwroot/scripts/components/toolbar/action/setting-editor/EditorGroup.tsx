@@ -22,7 +22,12 @@ const EditorGroup: FC<EditorGroupProps> = (props) => {
 				{title}
 			</Typography>
 
-			<Stack spacing={2} sx={{ margin: '0.5em 0 1em 3em' }}>
+			<Stack
+				spacing={2}
+				sx={{
+					margin: '0.5em 0 1em 3em',
+				}}
+			>
 				{children}
 			</Stack>
 		</Paper>

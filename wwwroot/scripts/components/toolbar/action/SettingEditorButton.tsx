@@ -2,9 +2,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Button, Dialog, type SxProps, type Theme } from '@mui/material';
 import { type FC, useState } from 'react';
 import { getSetting } from '../../../api/getSetting';
-import { useBusyStore } from '../../../stores/useBusyStore';
-import { useErrorNotifyStore } from '../../../stores/useErrorNotifyStore';
-import { useLanguageStore } from '../../../stores/useLanguageStore';
+import { useBusyStore } from '../../../hooks/useBusyStore';
+import { useErrorNotifyStore } from '../../../hooks/useErrorNotifyStore';
+import { useLanguageStore } from '../../../hooks/useLanguageStore';
 import type { Setting } from '../../../types/csharp';
 import EditorContainer from './setting-editor/EditorContainer';
 
