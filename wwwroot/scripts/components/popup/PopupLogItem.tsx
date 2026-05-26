@@ -13,7 +13,7 @@ const PopupLogItem: FC<PopupLogItemProps> = (props) => {
 	const handleClick = () => {
 		const id = getLogItemId(log.uuid);
 		// 要素有無の保証は出来ないので ensureElementById は使用しない
-		// ※ react と dom の狭間はなんも信じない方がいいなぁ
+		// ログの能動的削除を実装したため、要素が存在しない可能性がある
 		const element = document.getElementById(id);
 		if (element) {
 			element.scrollIntoView({ behavior: 'smooth', block: 'center' });

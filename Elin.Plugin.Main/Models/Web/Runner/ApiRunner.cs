@@ -4,7 +4,7 @@ using Elin.Plugin.Main.Models.Web.Runner.ApiData;
 using Elin.Plugin.Main.PluginHelpers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,7 +15,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
 {
     public class ApiRunner : RunnerBase
     {
-        public ApiRunner(IReadOnlyLogFileSetting logFileSetting, ILogTimeProvider logTimeProvider, SyncObject syncObject, Queue<LogItem>? logItems, IReadOnlyWebServerOptions options)
+        public ApiRunner(IReadOnlyLogFileSetting logFileSetting, ILogTimeProvider logTimeProvider, SyncObject syncObject, ConcurrentQueue<LogItem>? logItems, IReadOnlyWebServerOptions options)
             : base(options)
         {
             LogFileSetting = logFileSetting;
@@ -38,9 +38,10 @@ namespace Elin.Plugin.Main.Models.Web.Runner
         private IReadOnlyLogFileSetting LogFileSetting { get; }
         private ILogTimeProvider LogTimeProvider { get; }
         private SyncObject SyncObject { get; }
-        private Queue<LogItem>? LogItems { get; }
+        private ConcurrentQueue<LogItem>? LogItems { get; }
         private Routing[] Routings { get; }
-        private TimeSpan StreamDelay { get; } = TimeSpan.FromMilliseconds(750);
+        private TimeSpan StreamSocketDelay { get; } = TimeSpan.FromMilliseconds(750);
+        private TimeSpan StreamFileDelay { get; } = TimeSpan.FromMilliseconds(1500);
 
         private JsonSerializerSettings JsonSerializerSettings { get; } = new JsonSerializerSettings
         {
@@ -48,15 +49,13 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             Formatting = Formatting.None,
         };
 
-        private static string SseContentType => "text/event-stream";
-
         #endregion
 
         #region function
 
         private void ApplyEventStreamHeaders(HttpListenerContext context)
         {
-            context.Response.ContentType = SseContentType;
+            context.Response.ContentType = "text/event-stream";
             context.Response.Headers.Add("Cache-Control", "no-cache");
             context.Response.Headers.Add("Connection", "keep-alive");
         }
@@ -180,7 +179,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
                         ModHelper.WriteDev($"stream.Length: {stream.Length}, currentPosition: {currentPosition}");
 
                         await WriteStreamAsync(context, string.Empty, cancellationToken);
-                        await UniTask.Delay(StreamDelay, cancellationToken: cancellationToken);
+                        await UniTask.Delay(StreamFileDelay, cancellationToken: cancellationToken);
                         continue;
                     }
                 }
@@ -190,7 +189,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
                     {
                         ModHelper.WriteDev("監視中ファイル未生成");
                         await WriteStreamAsync(context, string.Empty, cancellationToken);
-                        await UniTask.Delay(StreamDelay, cancellationToken: cancellationToken);
+                        await UniTask.Delay(StreamFileDelay, cancellationToken: cancellationToken);
                         continue;
                     }
 
@@ -237,12 +236,11 @@ namespace Elin.Plugin.Main.Models.Web.Runner
                 if (LogItems.Count == 0)
                 {
                     await WriteStreamAsync(context, string.Empty, cancellationToken);
-                    await UniTask.Delay(StreamDelay, cancellationToken: cancellationToken);
+                    await UniTask.Delay(StreamSocketDelay, cancellationToken: cancellationToken);
                     continue;
                 }
 
-                LogItem? logItem;
-                while ((logItem = LogItems.Dequeue()) is not null)
+                while (LogItems.TryDequeue(out var logItem))
                 {
                     var json = JsonConvert.SerializeObject(logItem, JsonSerializerSettings);
                     //ModHelper.WriteDev($"stream json: {json}");

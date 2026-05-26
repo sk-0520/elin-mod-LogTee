@@ -14,6 +14,12 @@ namespace Elin.Plugin.Main.Models
 {
     public class LogBuffer : IDisposable
     {
+        #region variable
+
+        private readonly object _syncLogItems = new object();
+
+        #endregion
+
         public LogBuffer(ILogTimeProvider logTimeProvider, SyncObject syncObject, IReadOnlyLogBufferSetting logBufferSetting, IReadOnlyLogFileSetting logFileSetting, IReadOnlySocketClientSetting socketClientSetting)
         {
             LogTimeProvider = logTimeProvider;
@@ -120,36 +126,30 @@ namespace Elin.Plugin.Main.Models
 
         public void Add(LogItem item)
         {
-            if (IsSkipItem(item.Message, item.LogTimestamp))
+            bool shouldFlushNow;
+
+            lock (this._syncLogItems)
             {
-                return;
+                if (IsSkipItem(item.Message, item.LogTimestamp))
+                {
+                    return;
+                }
+
+                LogItem = item;
+
+                if (IsOverwriteItem(item.Message))
+                {
+                    LogItems[LogItems.Count - 1] = item;
+                }
+                else
+                {
+                    LogItems.Add(item);
+                }
+
+                shouldFlushNow = LogFlushLimit < LogItems.Count;
             }
 
-            LogItem = item;
-
-            var isOverwrite = IsOverwriteItem(item.Message);
-
-            Stock(item, isOverwrite);
-        }
-
-        private void Stock(LogItem item, bool isOverwrite)
-        {
-            if (isOverwrite)
-            {
-                LogItems[LogItems.Count - 1] = item;
-            }
-            else
-            {
-                //var a = JsonConvert.SerializeObject(item, JsonSetting);
-                //ModHelper.WriteDev(a);
-                //var b = JsonConvert.DeserializeObject<LogItem>(a, JsonSetting);
-                //ModHelper.WriteDev(b);
-                //ModHelper.WriteDev(item == b);
-
-                LogItems.Add(item);
-            }
-
-            if (LogFlushLimit < LogItems.Count)
+            if (shouldFlushNow)
             {
                 Flush();
             }
@@ -211,18 +211,19 @@ namespace Elin.Plugin.Main.Models
 
         private void FlushCore()
         {
-            var logLines = LogItems
-                .Select(a => JsonConvert.SerializeObject(a, JsonSetting))
-                .ToArray()
-            ;
-            LogItems.Clear();
-
-            if (logLines.Length == 0)
+            string[] logLines;
+            lock (this._syncLogItems)
             {
-                return;
+                if (LogItems.Count == 0)
+                {
+                    return;
+                }
+                logLines = LogItems
+                    .Select(a => JsonConvert.SerializeObject(a, JsonSetting))
+                    .ToArray()
+                ;
+                LogItems.Clear();
             }
-
-            //ModHelper.WriteDev($"{nameof(logLines)}.{nameof(logLines.Length)}: {logLines.Length}");
 
             if (LogFileSetting.IsEnabled && !string.IsNullOrWhiteSpace(LogFileSetting.FilePath))
             {
@@ -236,7 +237,6 @@ namespace Elin.Plugin.Main.Models
                 //ModHelper.WriteDev("SocketClient");
                 FlushSocketAsync(logLines, CancellationTokenSource.Token).Forget();
             }
-
         }
 
         private void Flush()

@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using Elin.Plugin.Main.PluginHelpers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
@@ -15,7 +15,7 @@ namespace Elin.Plugin.Main.Models.Socket
         {
             TcpListener = new TcpListener(System.Net.IPAddress.Any, port);
             LogCapacity = logCapacity;
-            LogItems = new Queue<LogItem>(LogCapacity);
+            LogItems = new ConcurrentQueue<LogItem>();
         }
 
         ~SocketServer()
@@ -27,7 +27,7 @@ namespace Elin.Plugin.Main.Models.Socket
 
         private int LogCapacity { get; }
         private TcpListener TcpListener { get; }
-        public Queue<LogItem> LogItems { get; }
+        public ConcurrentQueue<LogItem> LogItems { get; }
         private CancellationTokenSource CancellationTokenSource { get; } = new();
 
         #endregion
@@ -54,7 +54,7 @@ namespace Elin.Plugin.Main.Models.Socket
                 // あまりにもため込むとダメなので容量越えを破棄
                 while (LogCapacity < LogItems.Count)
                 {
-                    LogItems.Dequeue();
+                    LogItems.TryDequeue(out _);
                 }
             }
         }

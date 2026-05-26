@@ -1,6 +1,5 @@
 using System;
 using System.Net.Sockets;
-using System.Threading;
 
 namespace Elin.Plugin.Main.Models.Socket
 {
@@ -31,17 +30,6 @@ namespace Elin.Plugin.Main.Models.Socket
             return System.Text.Encoding.UTF8.GetBytes(s);
         }
 
-        public System.Threading.Tasks.Task SendAsync(byte[] binary, CancellationToken cancellationToken)
-        {
-            return Stream.WriteAsync(binary, 0, binary.Length, cancellationToken);
-        }
-
-        public System.Threading.Tasks.Task SendAsync(string message, CancellationToken cancellationToken)
-        {
-            var bytes = ToBinary(message + Environment.NewLine);
-            return SendAsync(bytes, cancellationToken);
-        }
-
         public void Send(byte[] binary)
         {
             Stream.Write(binary, 0, binary.Length);
@@ -49,7 +37,7 @@ namespace Elin.Plugin.Main.Models.Socket
 
         public void Send(string message)
         {
-            var bytes = ToBinary(message + Environment.NewLine);
+            var bytes = ToBinary(message);
             Send(bytes);
         }
 

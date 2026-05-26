@@ -4,7 +4,7 @@ using Elin.Plugin.Main.Models.Web.Runner;
 using Elin.Plugin.Main.PluginHelpers;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -14,7 +14,7 @@ namespace Elin.Plugin.Main.Models.Web
 {
     public class WebServer : IDisposable
     {
-        public WebServer(IReadOnlyLogFileSetting logFileSetting, IReadOnlyWebServerSetting webServerSetting, SyncObject syncObject, ILogTimeProvider logTimeProvider, Queue<LogItem>? logItems, IReadOnlyWebServerOptions webServerOptions)
+        public WebServer(IReadOnlyLogFileSetting logFileSetting, IReadOnlyWebServerSetting webServerSetting, SyncObject syncObject, ILogTimeProvider logTimeProvider, ConcurrentQueue<LogItem>? logItems, IReadOnlyWebServerOptions webServerOptions)
         {
             LogFileSetting = logFileSetting;
             WebServerSetting = webServerSetting;
@@ -46,7 +46,7 @@ namespace Elin.Plugin.Main.Models.Web
         private IReadOnlyWebServerSetting WebServerSetting { get; }
         private HttpListener HttpListener { get; }
         private ILogTimeProvider LogTimeProvider { get; }
-        private Queue<LogItem>? LogItems { get; }
+        private ConcurrentQueue<LogItem>? LogItems { get; }
         private IReadOnlyWebServerOptions Options { get; }
         private CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
 
@@ -92,7 +92,7 @@ namespace Elin.Plugin.Main.Models.Web
                         context.Response.StatusDescription = webServerException.StatusDescription;
                     }
 
-                    if (context.Response.StatusCode != (int)HttpStatusCode.NotFound)
+                    if (ModHelper.IsDebug && context.Response.StatusCode != (int)HttpStatusCode.NotFound)
                     {
                         ModHelper.LogNotExpected(ex);
                     }
@@ -107,7 +107,7 @@ namespace Elin.Plugin.Main.Models.Web
                 }
                 catch (Exception zombie)
                 {
-                    ModHelper.LogNotExpected(zombie);
+                    ModHelper.Logger.LogWarning(zombie);
                 }
             }
             finally
