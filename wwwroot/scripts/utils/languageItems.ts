@@ -288,16 +288,31 @@ const LanguageItems = {
 		cn: '高亮',
 	},
 
+	'setting.editor.frontend.highlight.popup.title': {
+		jp: 'ポップアップ',
+		en: 'Popup',
+		cn: '弹出',
+	},
+	'setting.editor.frontend.highlight.popup.limit.title': {
+		jp: '表示制限',
+		en: 'Popup Display Limit',
+		cn: '弹出显示限制',
+	},
+	'setting.editor.frontend.highlight.popup.autoClose.title': {
+		jp: '自動閉じる',
+		en: 'Auto Close',
+		cn: '自动关闭',
+	},
+	'setting.editor.frontend.highlight.popup.autoCloseDelay.title': {
+		jp: '自動的に閉じるまでの時間(msec)',
+		en: 'Auto Close Delay (msec)',
+		cn: '自动关闭延迟（msec）',
+	},
+
 	'setting.editor.frontend.highlight.addItem': {
 		jp: 'ハイライト項目追加',
 		en: 'Add Highlight Item',
 		cn: '添加高亮项',
-	},
-
-	'setting.editor.frontend.highlight.popup.limit.title': {
-		jp: 'ポップアップ表示制限',
-		en: 'Popup Display Limit',
-		cn: '弹出显示限制',
 	},
 
 	'setting.editor.frontend.highlight.item.display.title': {

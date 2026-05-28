@@ -521,25 +521,66 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<EditorGroup
 									title={getText('setting.editor.frontend.highlight.title')}
 								>
-									<Controller
-										name="highlight.popup.limit"
-										control={control}
-										rules={{
-											...ruleRequired(true, language),
-											...ruleMin(1, language),
-											...ruleMax(100, language),
-										}}
-										render={({ field, fieldState }) => (
-											<StyledNumberTextField
-												{...field}
-												label={getText(
-													'setting.editor.frontend.highlight.popup.limit.title',
-												)}
-												error={!!fieldState.error}
-												helperText={<ErrorMessage fieldState={fieldState} />}
-											/>
+									<EditorGroup
+										title={getText(
+											'setting.editor.frontend.highlight.popup.title',
 										)}
-									/>
+									>
+										<Controller
+											name="highlight.popup.limit"
+											control={control}
+											rules={{
+												...ruleRequired(true, language),
+												...ruleMin(1, language),
+												...ruleMax(100, language),
+											}}
+											render={({ field, fieldState }) => (
+												<StyledNumberTextField
+													{...field}
+													label={getText(
+														'setting.editor.frontend.highlight.popup.limit.title',
+													)}
+													error={!!fieldState.error}
+													helperText={<ErrorMessage fieldState={fieldState} />}
+												/>
+											)}
+										/>
+
+										<Controller
+											name="highlight.popup.autoClose"
+											control={control}
+											render={({ field }) => (
+												<FormControlLabel
+													control={
+														<StyledCheckbox {...field} checked={field.value} />
+													}
+													label={getText(
+														'setting.editor.frontend.highlight.popup.autoClose.title',
+													)}
+												/>
+											)}
+										/>
+
+										<Controller
+											name="highlight.popup.autoCloseDelay"
+											control={control}
+											rules={{
+												...ruleRequired(true, language),
+												...ruleMin(10 * 1000, language),
+												...ruleMax(300 * 1000, language),
+											}}
+											render={({ field, fieldState }) => (
+												<StyledNumberTextField
+													{...field}
+													label={getText(
+														'setting.editor.frontend.highlight.popup.autoCloseDelay.title',
+													)}
+													error={!!fieldState.error}
+													helperText={<ErrorMessage fieldState={fieldState} />}
+												/>
+											)}
+										/>
+									</EditorGroup>
 
 									<Button
 										startIcon={<AddIcon />}
