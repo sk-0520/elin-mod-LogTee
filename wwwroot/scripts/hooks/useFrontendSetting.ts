@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import type { FrontendSetting } from '../types/csharp';
-import type { ParsedHighlightSetting } from '../types/highlight';
 import {
-	applyFrontendSetting,
-	HighlightDefaultPopupLimit,
-	parseHighlightSetting,
-} from '../utils/setting';
+	HighlightPopupSettingSchema,
+	type ParsedHighlightSetting,
+} from '../types/highlight';
+import { applyFrontendSetting, parseHighlightSetting } from '../utils/setting';
 
 export interface FrontendSettingState {
 	setting: FrontendSetting;
@@ -25,7 +24,10 @@ const DefaultState: FrontendSettingState = {
 		elementLimit: 4 * 1024,
 		highlight: '',
 	},
-	highlight: { popupLimit: HighlightDefaultPopupLimit, items: [] },
+	highlight: {
+		popup: HighlightPopupSettingSchema.parse(undefined),
+		items: [],
+	},
 };
 
 export const useFrontendSettingStore = create<FrontendSettingStore>()(

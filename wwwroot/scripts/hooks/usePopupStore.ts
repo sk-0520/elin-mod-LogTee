@@ -1,15 +1,18 @@
 import { create } from 'zustand';
 import type { LogItem } from '../types/csharp';
-import { HighlightDefaultPopupLimit } from '../utils/setting';
+import {
+	type HighlightPopupSetting,
+	HighlightPopupSettingSchema,
+} from '../types/highlight';
 
 export interface PopupState {
-	limit: number;
+	setting: HighlightPopupSetting;
 	openDetail: boolean;
 	hasLogs: boolean;
 	logs: LogItem[];
 }
 export interface PopupActions {
-	setLimit: (limit: number) => void;
+	setSetting: (setting: HighlightPopupSetting) => void;
 	setOpenDetail: (open: boolean) => void;
 	enqueueLog: (log: LogItem) => void;
 	clearLogs: () => void;
@@ -19,7 +22,7 @@ export interface PopupActions {
 export type PopupStore = PopupState & PopupActions;
 
 const DefaultState: PopupState = {
-	limit: HighlightDefaultPopupLimit,
+	setting: HighlightPopupSettingSchema.parse(undefined),
 	openDetail: true,
 	hasLogs: false,
 	logs: [],
@@ -29,8 +32,8 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 	return {
 		...DefaultState,
 
-		setLimit: (limit: number) => {
-			set({ limit: limit });
+		setSetting: (setting: HighlightPopupSetting) => {
+			set({ setting: setting });
 		},
 
 		setOpenDetail(open: boolean) {
@@ -38,9 +41,9 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 		},
 
 		enqueueLog: (log: LogItem) => {
-			const limit = get().limit;
+			const setting = get().setting;
 			const logs = get().logs;
-			const newLogs = [...logs, log].slice(-limit);
+			const newLogs = [...logs, log].slice(-setting.limit);
 			set({ logs: newLogs, hasLogs: true });
 		},
 

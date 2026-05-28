@@ -1,5 +1,6 @@
 import type { FrontendSetting } from '../types/csharp';
 import {
+	HighlightPopupSettingSchema,
 	type HighlightSettingItem,
 	HighlightSettingSchema,
 	type ParsedHighlightItemSetting,
@@ -8,8 +9,6 @@ import {
 	type ParsedRegexDynamicItemSetting,
 } from '../types/highlight';
 import { getLogElement } from './dom';
-
-export const HighlightDefaultPopupLimit = 5;
 
 export function applyFrontendSetting(
 	setting: Omit<FrontendSetting, 'highlight'>,
@@ -48,11 +47,11 @@ export function parseHighlightSetting(raw: string): ParsedHighlightSetting {
 
 		const items = rawHighlightSetting.items.map(parsedHighlightItem);
 
-		return { popupLimit: rawHighlightSetting.popupLimit, items: items };
+		return { popup: rawHighlightSetting.popup, items: items };
 	}
 
 	return {
-		popupLimit: HighlightDefaultPopupLimit,
+		popup: HighlightPopupSettingSchema.parse(undefined),
 		items: [],
 	};
 }

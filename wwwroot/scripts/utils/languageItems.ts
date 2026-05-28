@@ -294,7 +294,7 @@ const LanguageItems = {
 		cn: '添加高亮项',
 	},
 
-	'setting.editor.frontend.highlight.popupLimit.title': {
+	'setting.editor.frontend.highlight.popup.limit.title': {
 		jp: 'ポップアップ表示制限',
 		en: 'Popup Display Limit',
 		cn: '弹出显示限制',

@@ -32,6 +32,8 @@ import type { Setting } from '../../../../types/csharp';
 import {
 	HighlightDisplaySchema,
 	HighlightMatchSchema,
+	type HighlightPopupSetting,
+	HighlightPopupSettingSchema,
 	type HighlightSetting,
 	type HighlightSettingItem,
 	type HighlightSettingWithId,
@@ -42,10 +44,7 @@ import {
 	rulesRequired as ruleRequired,
 } from '../../../../utils/forms';
 import { format } from '../../../../utils/language';
-import {
-	HighlightDefaultPopupLimit,
-	parseHighlightSetting,
-} from '../../../../utils/setting';
+import { parseHighlightSetting } from '../../../../utils/setting';
 import EditorGroup from './EditorGroup';
 import ErrorMessage from './ErrorMessage';
 import ResetButton from './ResetButton';
@@ -93,7 +92,7 @@ const StyledCheckbox = styled((props: CheckboxProps) => (
 
 type SettingFormData = Setting & {
 	highlight: {
-		popupLimit: number;
+		popup: HighlightPopupSetting;
 		items: HighlightSettingWithId[];
 	};
 };
@@ -113,7 +112,7 @@ function parseParsedHighlightSetting(
 		const parsed = parseHighlightSetting(rawHighlight);
 
 		return {
-			popupLimit: parsed.popupLimit,
+			popup: parsed.popup,
 			items: parsed.items.map((a) => ({
 				id: crypto.randomUUID(),
 				display: a.display,
@@ -125,7 +124,7 @@ function parseParsedHighlightSetting(
 	}
 
 	return {
-		popupLimit: HighlightDefaultPopupLimit,
+		popup: HighlightPopupSettingSchema.parse(undefined),
 		items: [],
 	};
 }
@@ -186,7 +185,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 		try {
 			const { highlight, ...apiData } = data;
 			apiData.frontend.highlight = JSON.stringify({
-				popupLimit: highlight.popupLimit,
+				popup: highlight.popup,
 				items: highlight.items.map((a) => ({
 					display: a.display,
 					match: a.match,
@@ -523,7 +522,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									title={getText('setting.editor.frontend.highlight.title')}
 								>
 									<Controller
-										name="highlight.popupLimit"
+										name="highlight.popup.limit"
 										control={control}
 										rules={{
 											...ruleRequired(true, language),
@@ -534,7 +533,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											<StyledNumberTextField
 												{...field}
 												label={getText(
-													'setting.editor.frontend.highlight.popupLimit.title',
+													'setting.editor.frontend.highlight.popup.limit.title',
 												)}
 												error={!!fieldState.error}
 												helperText={<ErrorMessage fieldState={fieldState} />}
