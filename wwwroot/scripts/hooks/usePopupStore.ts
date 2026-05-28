@@ -5,9 +5,13 @@ import {
 	HighlightPopupSettingSchema,
 } from '../types/highlight';
 
+type TimeoutId = ReturnType<typeof setTimeout>;
+const DisableAutoCloseTimeout = 0 as unknown as TimeoutId;
+
 export interface PopupState {
 	setting: HighlightPopupSetting;
 	openDetail: boolean;
+	autoCloseTimeoutId: TimeoutId;
 	hasLogs: boolean;
 	logs: LogItem[];
 }
@@ -24,11 +28,29 @@ export type PopupStore = PopupState & PopupActions;
 const DefaultState: PopupState = {
 	setting: HighlightPopupSettingSchema.parse(undefined),
 	openDetail: true,
+	autoCloseTimeoutId: DisableAutoCloseTimeout,
 	hasLogs: false,
 	logs: [],
 };
 
 export const usePopupStore = create<PopupStore>()((set, get) => {
+	const startAutoCloseTimeout = (delay: number): TimeoutId => {
+		return setTimeout(() => {
+			set({
+				logs: [],
+				hasLogs: false,
+				autoCloseTimeoutId: DisableAutoCloseTimeout,
+			});
+		}, delay);
+	};
+
+	const stopAutoCloseTimeout = () => {
+		const timeoutId = get().autoCloseTimeoutId;
+		if (timeoutId !== DisableAutoCloseTimeout) {
+			clearTimeout(timeoutId);
+		}
+	};
+
 	return {
 		...DefaultState,
 
@@ -41,14 +63,26 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 		},
 
 		enqueueLog: (log: LogItem) => {
+			stopAutoCloseTimeout();
+
 			const setting = get().setting;
 			const logs = get().logs;
 			const newLogs = [...logs, log].slice(-setting.limit);
-			set({ logs: newLogs, hasLogs: true });
+
+			const timeoutId = setting.autoClose
+				? startAutoCloseTimeout(setting.autoCloseDelay)
+				: DisableAutoCloseTimeout;
+
+			set({ logs: newLogs, hasLogs: true, autoCloseTimeoutId: timeoutId });
 		},
 
 		clearLogs: () => {
-			set({ logs: [], hasLogs: false });
+			stopAutoCloseTimeout();
+			set({
+				logs: [],
+				hasLogs: false,
+				autoCloseTimeoutId: DisableAutoCloseTimeout,
+			});
 		},
 
 		removeLog: (uuid: string) => {
@@ -56,7 +90,14 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 			const newLogs = logs.filter((log) => log.uuid !== uuid);
 			// 長さが同じならば削除されていないので更新しない
 			if (logs.length !== newLogs.length) {
-				set({ logs: newLogs, hasLogs: 0 < newLogs.length });
+				const hasLogs = 0 < newLogs.length;
+				let timeoutId = get().autoCloseTimeoutId;
+				if (!hasLogs) {
+					stopAutoCloseTimeout();
+					timeoutId = DisableAutoCloseTimeout;
+				}
+
+				set({ logs: newLogs, hasLogs: hasLogs, autoCloseTimeoutId: timeoutId });
 			}
 		},
 	};

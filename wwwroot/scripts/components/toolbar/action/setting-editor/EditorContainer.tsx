@@ -38,6 +38,7 @@ import {
 	type HighlightSettingItem,
 	type HighlightSettingWithId,
 } from '../../../../types/highlight';
+import { Environment } from '../../../../utils/env';
 import {
 	ruleMax,
 	ruleMin,
@@ -566,8 +567,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											control={control}
 											rules={{
 												...ruleRequired(true, language),
-												...ruleMin(10 * 1000, language),
-												...ruleMax(300 * 1000, language),
+												...ruleMin(
+													Environment.isDebug ? 1000 : 10 * 1000,
+													language,
+												),
+												...ruleMax(600 * 1000, language),
 											}}
 											render={({ field, fieldState }) => (
 												<StyledNumberTextField
