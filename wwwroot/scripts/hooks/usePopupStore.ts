@@ -11,7 +11,12 @@ const DisableAutoCloseTimeout = 0 as unknown as TimeoutId;
 export interface PopupState {
 	setting: HighlightPopupSetting;
 	openDetail: boolean;
+
 	autoCloseTimeoutId: TimeoutId;
+	autoCloseProgressTimeoutId: TimeoutId;
+	startTimer: Date | undefined;
+	timeoutProgress: number;
+
 	hasLogs: boolean;
 	logs: LogItem[];
 }
@@ -29,17 +34,37 @@ const DefaultState: PopupState = {
 	setting: HighlightPopupSettingSchema.parse(undefined),
 	openDetail: true,
 	autoCloseTimeoutId: DisableAutoCloseTimeout,
+	autoCloseProgressTimeoutId: DisableAutoCloseTimeout,
+	startTimer: undefined,
+	timeoutProgress: 0,
 	hasLogs: false,
 	logs: [],
 };
 
 export const usePopupStore = create<PopupStore>()((set, get) => {
 	const startAutoCloseTimeout = (delay: number): TimeoutId => {
+		const autoCloseProgressTimeoutId = setInterval(() => {
+			const startTimer = get().startTimer;
+			if (startTimer) {
+				const now = new Date();
+				const elapsed = now.getTime() - startTimer.getTime();
+				const progress = Math.min(elapsed / delay, 1);
+				console.debug('Auto close progress:', progress);
+				set({
+					timeoutProgress: progress,
+					autoCloseProgressTimeoutId: autoCloseProgressTimeoutId,
+				});
+			}
+		}, 100);
+
 		return setTimeout(() => {
 			set({
 				logs: [],
 				hasLogs: false,
 				autoCloseTimeoutId: DisableAutoCloseTimeout,
+				autoCloseProgressTimeoutId: DisableAutoCloseTimeout,
+				startTimer: new Date(),
+				timeoutProgress: 0,
 			});
 		}, delay);
 	};
@@ -48,6 +73,10 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 		const timeoutId = get().autoCloseTimeoutId;
 		if (timeoutId !== DisableAutoCloseTimeout) {
 			clearTimeout(timeoutId);
+		}
+		const progressTimeoutId = get().autoCloseProgressTimeoutId;
+		if (progressTimeoutId !== DisableAutoCloseTimeout) {
+			clearInterval(progressTimeoutId);
 		}
 	};
 
@@ -73,7 +102,13 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 				? startAutoCloseTimeout(setting.autoCloseDelay)
 				: DisableAutoCloseTimeout;
 
-			set({ logs: newLogs, hasLogs: true, autoCloseTimeoutId: timeoutId });
+			set({
+				logs: newLogs,
+				hasLogs: true,
+				autoCloseTimeoutId: timeoutId,
+				startTimer: setting.autoClose ? new Date() : undefined,
+				timeoutProgress: 0,
+			});
 		},
 
 		clearLogs: () => {
@@ -82,6 +117,8 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 				logs: [],
 				hasLogs: false,
 				autoCloseTimeoutId: DisableAutoCloseTimeout,
+				startTimer: undefined,
+				timeoutProgress: 0,
 			});
 		},
 
@@ -97,7 +134,11 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 					timeoutId = DisableAutoCloseTimeout;
 				}
 
-				set({ logs: newLogs, hasLogs: hasLogs, autoCloseTimeoutId: timeoutId });
+				set({
+					logs: newLogs,
+					hasLogs: hasLogs,
+					autoCloseTimeoutId: timeoutId,
+				});
 			}
 		},
 	};
