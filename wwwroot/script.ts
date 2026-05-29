@@ -44,7 +44,7 @@ async function boot(): Promise<void> {
 		useFrontendSettingStore.getState().setSetting(setting.frontend);
 		usePopupStore
 			.getState()
-			.setLimit(useFrontendSettingStore.getState().highlight.popupLimit);
+			.setSetting(useFrontendSettingStore.getState().highlight.popup);
 	} catch (error) {
 		console.error('Failed to get setting', error);
 	}

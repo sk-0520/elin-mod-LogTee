@@ -24,8 +24,22 @@ export type HighlightSettingWithId = HighlightSettingItem & {
 	id: string;
 };
 
+export const HighlightPopupSettingSchema = z
+	.object({
+		limit: z.number().nonnegative(),
+		autoClose: z.boolean(),
+		autoCloseDelay: z.number().nonnegative(),
+	})
+	// ポップアップ設定は後入れなのでデフォルト値を設定
+	.default({
+		limit: 5,
+		autoClose: true,
+		autoCloseDelay: 60_000,
+	});
+export type HighlightPopupSetting = z.infer<typeof HighlightPopupSettingSchema>;
+
 export const HighlightSettingSchema = z.object({
-	popupLimit: z.number().nonnegative(),
+	popup: HighlightPopupSettingSchema,
 	items: z.array(HighlightSettingItemSchema),
 });
 export type HighlightSetting = z.infer<typeof HighlightSettingSchema>;
@@ -52,6 +66,6 @@ export type ParsedHighlightItemSetting =
 	| ParsedRegexDynamicItemSetting;
 
 export interface ParsedHighlightSetting {
-	popupLimit: number;
+	popup: HighlightPopupSetting;
 	readonly items: ParsedHighlightItemSetting[];
 }

@@ -1,15 +1,27 @@
 import { create } from 'zustand';
 import type { LogItem } from '../types/csharp';
-import { HighlightDefaultPopupLimit } from '../utils/setting';
+import {
+	type HighlightPopupSetting,
+	HighlightPopupSettingSchema,
+} from '../types/highlight';
+
+type TimeoutId = ReturnType<typeof setTimeout>;
+const DisableAutoCloseTimeout = 0 as unknown as TimeoutId;
 
 export interface PopupState {
-	limit: number;
+	setting: HighlightPopupSetting;
 	openDetail: boolean;
+
+	autoCloseTimeoutId: TimeoutId;
+	autoCloseProgressTimeoutId: TimeoutId;
+	startTimer: Date | undefined;
+	timeoutProgress: number;
+
 	hasLogs: boolean;
 	logs: LogItem[];
 }
 export interface PopupActions {
-	setLimit: (limit: number) => void;
+	setSetting: (setting: HighlightPopupSetting) => void;
 	setOpenDetail: (open: boolean) => void;
 	enqueueLog: (log: LogItem) => void;
 	clearLogs: () => void;
@@ -19,18 +31,60 @@ export interface PopupActions {
 export type PopupStore = PopupState & PopupActions;
 
 const DefaultState: PopupState = {
-	limit: HighlightDefaultPopupLimit,
+	setting: HighlightPopupSettingSchema.parse(undefined),
 	openDetail: true,
+	autoCloseTimeoutId: DisableAutoCloseTimeout,
+	autoCloseProgressTimeoutId: DisableAutoCloseTimeout,
+	startTimer: undefined,
+	timeoutProgress: 0,
 	hasLogs: false,
 	logs: [],
 };
 
 export const usePopupStore = create<PopupStore>()((set, get) => {
+	const startAutoCloseTimeout = (delay: number): TimeoutId => {
+		const autoCloseProgressTimeoutId = setInterval(() => {
+			const startTimer = get().startTimer;
+			if (startTimer) {
+				const now = new Date();
+				const elapsed = now.getTime() - startTimer.getTime();
+				const progress = Math.min(elapsed / delay, 1);
+				console.debug('Auto close progress:', progress);
+				set({
+					timeoutProgress: progress,
+					autoCloseProgressTimeoutId: autoCloseProgressTimeoutId,
+				});
+			}
+		}, 100);
+
+		return setTimeout(() => {
+			set({
+				logs: [],
+				hasLogs: false,
+				autoCloseTimeoutId: DisableAutoCloseTimeout,
+				autoCloseProgressTimeoutId: DisableAutoCloseTimeout,
+				startTimer: new Date(),
+				timeoutProgress: 0,
+			});
+		}, delay);
+	};
+
+	const stopAutoCloseTimeout = () => {
+		const timeoutId = get().autoCloseTimeoutId;
+		if (timeoutId !== DisableAutoCloseTimeout) {
+			clearTimeout(timeoutId);
+		}
+		const progressTimeoutId = get().autoCloseProgressTimeoutId;
+		if (progressTimeoutId !== DisableAutoCloseTimeout) {
+			clearInterval(progressTimeoutId);
+		}
+	};
+
 	return {
 		...DefaultState,
 
-		setLimit: (limit: number) => {
-			set({ limit: limit });
+		setSetting: (setting: HighlightPopupSetting) => {
+			set({ setting: setting });
 		},
 
 		setOpenDetail(open: boolean) {
@@ -38,14 +92,34 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 		},
 
 		enqueueLog: (log: LogItem) => {
-			const limit = get().limit;
+			stopAutoCloseTimeout();
+
+			const setting = get().setting;
 			const logs = get().logs;
-			const newLogs = [...logs, log].slice(-limit);
-			set({ logs: newLogs, hasLogs: true });
+			const newLogs = [...logs, log].slice(-setting.limit);
+
+			const timeoutId = setting.autoClose
+				? startAutoCloseTimeout(setting.autoCloseDelay)
+				: DisableAutoCloseTimeout;
+
+			set({
+				logs: newLogs,
+				hasLogs: true,
+				autoCloseTimeoutId: timeoutId,
+				startTimer: setting.autoClose ? new Date() : undefined,
+				timeoutProgress: 0,
+			});
 		},
 
 		clearLogs: () => {
-			set({ logs: [], hasLogs: false });
+			stopAutoCloseTimeout();
+			set({
+				logs: [],
+				hasLogs: false,
+				autoCloseTimeoutId: DisableAutoCloseTimeout,
+				startTimer: undefined,
+				timeoutProgress: 0,
+			});
 		},
 
 		removeLog: (uuid: string) => {
@@ -53,7 +127,18 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 			const newLogs = logs.filter((log) => log.uuid !== uuid);
 			// 長さが同じならば削除されていないので更新しない
 			if (logs.length !== newLogs.length) {
-				set({ logs: newLogs, hasLogs: 0 < newLogs.length });
+				const hasLogs = 0 < newLogs.length;
+				let timeoutId = get().autoCloseTimeoutId;
+				if (!hasLogs) {
+					stopAutoCloseTimeout();
+					timeoutId = DisableAutoCloseTimeout;
+				}
+
+				set({
+					logs: newLogs,
+					hasLogs: hasLogs,
+					autoCloseTimeoutId: timeoutId,
+				});
 			}
 		},
 	};

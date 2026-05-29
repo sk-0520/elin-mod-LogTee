@@ -11,7 +11,7 @@ namespace Elin.Plugin.Main.Models.Settings
 
         int ElementLimit { get; }
 
-        string Highlight { get; }
+        string HighlightV2 { get; }
 
         #endregion
     }
@@ -24,8 +24,8 @@ namespace Elin.Plugin.Main.Models.Settings
         public virtual string CssFontSize { get; set; } = string.Empty;
         public virtual int ElementLimit { get; set; }
 
-        [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.FrontendSettingHighlight), AllLanguage = true)]
-        public virtual string Highlight { get; set; } = string.Empty;
+        [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.FrontendSettingHighlightV2), AllLanguage = true)]
+        public virtual string HighlightV2 { get; set; } = string.Empty;
 
         #endregion
     }

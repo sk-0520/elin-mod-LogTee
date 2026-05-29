@@ -23,6 +23,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { encode } from 'js-base64';
 import type { FC } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import postSetting from '../../../../api/postSetting';
@@ -32,20 +33,20 @@ import type { Setting } from '../../../../types/csharp';
 import {
 	HighlightDisplaySchema,
 	HighlightMatchSchema,
+	type HighlightPopupSetting,
+	HighlightPopupSettingSchema,
 	type HighlightSetting,
 	type HighlightSettingItem,
 	type HighlightSettingWithId,
 } from '../../../../types/highlight';
+import { Environment } from '../../../../utils/env';
 import {
 	ruleMax,
 	ruleMin,
 	rulesRequired as ruleRequired,
 } from '../../../../utils/forms';
 import { format } from '../../../../utils/language';
-import {
-	HighlightDefaultPopupLimit,
-	parseHighlightSetting,
-} from '../../../../utils/setting';
+import { parseHighlightSetting } from '../../../../utils/setting';
 import EditorGroup from './EditorGroup';
 import ErrorMessage from './ErrorMessage';
 import ResetButton from './ResetButton';
@@ -93,7 +94,7 @@ const StyledCheckbox = styled((props: CheckboxProps) => (
 
 type SettingFormData = Setting & {
 	highlight: {
-		popupLimit: number;
+		popup: HighlightPopupSetting;
 		items: HighlightSettingWithId[];
 	};
 };
@@ -113,7 +114,7 @@ function parseParsedHighlightSetting(
 		const parsed = parseHighlightSetting(rawHighlight);
 
 		return {
-			popupLimit: parsed.popupLimit,
+			popup: parsed.popup,
 			items: parsed.items.map((a) => ({
 				id: crypto.randomUUID(),
 				display: a.display,
@@ -125,7 +126,7 @@ function parseParsedHighlightSetting(
 	}
 
 	return {
-		popupLimit: HighlightDefaultPopupLimit,
+		popup: HighlightPopupSettingSchema.parse(undefined),
 		items: [],
 	};
 }
@@ -143,7 +144,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const { control, watch, handleSubmit } = useForm<SettingFormData>({
 		defaultValues: {
 			...setting,
-			highlight: parseParsedHighlightSetting(setting.frontend.highlight),
+			highlight: parseParsedHighlightSetting(setting.frontend.highlightV2),
 		},
 	});
 
@@ -185,15 +186,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const onSubmit = async (data: SettingFormData) => {
 		try {
 			const { highlight, ...apiData } = data;
-			apiData.frontend.highlight = JSON.stringify({
-				popupLimit: highlight.popupLimit,
-				items: highlight.items.map((a) => ({
-					display: a.display,
-					match: a.match,
-					ignoreCase: a.ignoreCase,
-					pattern: a.pattern,
-				})),
-			} satisfies HighlightSetting);
+			apiData.frontend.highlightV2 = encode(
+				JSON.stringify({
+					popup: highlight.popup,
+					items: highlight.items.map((a) => ({
+						display: a.display,
+						match: a.match,
+						ignoreCase: a.ignoreCase,
+						pattern: a.pattern,
+					})),
+				} satisfies HighlightSetting),
+			);
 			await postSetting(apiData);
 			// 全部初期化すべし
 			// 細かい状態管理をしていないのでこれでよろし
@@ -522,25 +525,69 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								<EditorGroup
 									title={getText('setting.editor.frontend.highlight.title')}
 								>
-									<Controller
-										name="highlight.popupLimit"
-										control={control}
-										rules={{
-											...ruleRequired(true, language),
-											...ruleMin(1, language),
-											...ruleMax(100, language),
-										}}
-										render={({ field, fieldState }) => (
-											<StyledNumberTextField
-												{...field}
-												label={getText(
-													'setting.editor.frontend.highlight.popupLimit.title',
-												)}
-												error={!!fieldState.error}
-												helperText={<ErrorMessage fieldState={fieldState} />}
-											/>
+									<EditorGroup
+										title={getText(
+											'setting.editor.frontend.highlight.popup.title',
 										)}
-									/>
+									>
+										<Controller
+											name="highlight.popup.limit"
+											control={control}
+											rules={{
+												...ruleRequired(true, language),
+												...ruleMin(1, language),
+												...ruleMax(100, language),
+											}}
+											render={({ field, fieldState }) => (
+												<StyledNumberTextField
+													{...field}
+													label={getText(
+														'setting.editor.frontend.highlight.popup.limit.title',
+													)}
+													error={!!fieldState.error}
+													helperText={<ErrorMessage fieldState={fieldState} />}
+												/>
+											)}
+										/>
+
+										<Controller
+											name="highlight.popup.autoClose"
+											control={control}
+											render={({ field }) => (
+												<FormControlLabel
+													control={
+														<StyledCheckbox {...field} checked={field.value} />
+													}
+													label={getText(
+														'setting.editor.frontend.highlight.popup.autoClose.title',
+													)}
+												/>
+											)}
+										/>
+
+										<Controller
+											name="highlight.popup.autoCloseDelay"
+											control={control}
+											rules={{
+												...ruleRequired(true, language),
+												...ruleMin(
+													Environment.isDebug ? 1000 : 10 * 1000,
+													language,
+												),
+												...ruleMax(600 * 1000, language),
+											}}
+											render={({ field, fieldState }) => (
+												<StyledNumberTextField
+													{...field}
+													label={getText(
+														'setting.editor.frontend.highlight.popup.autoCloseDelay.title',
+													)}
+													error={!!fieldState.error}
+													helperText={<ErrorMessage fieldState={fieldState} />}
+												/>
+											)}
+										/>
+									</EditorGroup>
 
 									<Button
 										startIcon={<AddIcon />}
