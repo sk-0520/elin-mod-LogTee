@@ -105,10 +105,10 @@
       "CN": "启动时打开浏览器"
     },
 
-    "FrontendSettingHighlight": {
-      "JP": "ログ強調設定, 手動での設定は未考慮",
-      "EN": "Log highlighting setting, manual configuration is not considered",
-      "CN": "日志高亮设置，手动配置未考虑"
+    "FrontendSettingHighlightV2": {
+      "JP": "ログ強調設定, 諸事情によりブラウザから設定してください",
+      "EN": "Log highlighting setting, please configure from the browser due to various reasons",
+      "CN": "日志高亮设置，由于各种原因，请从浏览器进行配置"
     }
   }
 }

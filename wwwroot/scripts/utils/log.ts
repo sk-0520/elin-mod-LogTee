@@ -10,7 +10,7 @@ import type {
 	ParsedHighlightSetting,
 } from '../types/highlight';
 import { dump, get } from './access';
-import { convertStyleColor } from './converter';
+import { convertHtmlFromLogMessage, convertStyleColor } from './converter';
 import {
 	createLogItemElementByTemplate,
 	createModMessageWithDetailElementByTemplate,
@@ -95,8 +95,9 @@ function createLogItemElement(
 
 	logItemElement.id = getLogItemId(logItem.uuid);
 	logItemElement.style.color = color;
-	// TODO: まぁローカルで脆弱性があるだけなので、勘弁してくれ
-	logItemElement.innerHTML = logItem.message.message;
+	logItemElement.append(
+		convertHtmlFromLogMessage(logItem.message.message, 'log'),
+	);
 	logItemElement.dataset.log = JSON.stringify(logItem);
 
 	// ハイライト

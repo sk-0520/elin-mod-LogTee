@@ -23,6 +23,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { encode } from 'js-base64';
 import type { FC } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import postSetting from '../../../../api/postSetting';
@@ -143,7 +144,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const { control, watch, handleSubmit } = useForm<SettingFormData>({
 		defaultValues: {
 			...setting,
-			highlight: parseParsedHighlightSetting(setting.frontend.highlight),
+			highlight: parseParsedHighlightSetting(setting.frontend.highlightV2),
 		},
 	});
 
@@ -185,15 +186,17 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const onSubmit = async (data: SettingFormData) => {
 		try {
 			const { highlight, ...apiData } = data;
-			apiData.frontend.highlight = JSON.stringify({
-				popup: highlight.popup,
-				items: highlight.items.map((a) => ({
-					display: a.display,
-					match: a.match,
-					ignoreCase: a.ignoreCase,
-					pattern: a.pattern,
-				})),
-			} satisfies HighlightSetting);
+			apiData.frontend.highlightV2 = encode(
+				JSON.stringify({
+					popup: highlight.popup,
+					items: highlight.items.map((a) => ({
+						display: a.display,
+						match: a.match,
+						ignoreCase: a.ignoreCase,
+						pattern: a.pattern,
+					})),
+				} satisfies HighlightSetting),
+			);
 			await postSetting(apiData);
 			// 全部初期化すべし
 			// 細かい状態管理をしていないのでこれでよろし

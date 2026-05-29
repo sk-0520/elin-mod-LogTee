@@ -1,3 +1,4 @@
+import { decode } from 'js-base64';
 import type { FrontendSetting } from '../types/csharp';
 import {
 	HighlightPopupSettingSchema,
@@ -42,7 +43,8 @@ function parsedHighlightItem(
 
 export function parseHighlightSetting(raw: string): ParsedHighlightSetting {
 	if (raw) {
-		const json = JSON.parse(raw);
+		const decoded = decode(raw);
+		const json = JSON.parse(decoded);
 		const rawHighlightSetting = HighlightSettingSchema.parse(json);
 
 		const items = rawHighlightSetting.items.map(parsedHighlightItem);

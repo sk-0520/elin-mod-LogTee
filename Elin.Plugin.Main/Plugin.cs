@@ -79,6 +79,7 @@ namespace Elin.Plugin.Main
             // 実行中にポートやらを変えられると反映が面倒
             // ただし設定の保存機能としての窓口として SettingProxy プロパティは使用する
             SettingProxy = Setting.Bind(Config, new Setting());
+
             var setting = SettingProxy.Clone();
             Setting.Instance = setting;
 

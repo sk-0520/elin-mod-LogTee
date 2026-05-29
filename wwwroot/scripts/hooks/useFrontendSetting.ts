@@ -22,7 +22,7 @@ const DefaultState: FrontendSettingState = {
 		cssFontFamily: 'sans-serif',
 		cssFontSize: '12px',
 		elementLimit: 4 * 1024,
-		highlight: '',
+		highlightV2: '',
 	},
 	highlight: {
 		popup: HighlightPopupSettingSchema.parse(undefined),
@@ -36,7 +36,7 @@ export const useFrontendSettingStore = create<FrontendSettingStore>()(
 			...DefaultState,
 
 			setSetting: (setting: FrontendSetting) => {
-				const highlightSetting = parseHighlightSetting(setting.highlight);
+				const highlightSetting = parseHighlightSetting(setting.highlightV2);
 
 				set({ setting: setting, highlight: highlightSetting });
 

@@ -24,3 +24,38 @@ export function convertGameTimestamp(timestamp: GameDateTime): string {
 	};
 	return `${year}/${padded.month}/${padded.day} ${padded.hour}:${padded.minute}:${padded.second}`;
 }
+
+const DomParser = new DOMParser();
+function convertHtmlFromLogMessageByLog(raw: string): Node {
+	if (raw.indexOf('<') < raw.indexOf('>')) {
+		const doc = DomParser.parseFromString(raw, 'text/html');
+		const node = doc.body.firstChild;
+		if (node) {
+			return node;
+		}
+	}
+
+	return document.createTextNode(raw);
+}
+
+function convertHtmlFromLogMessageByPopup(_raw: string): React.ReactNode {
+	throw new Error('Not implemented');
+}
+
+export function convertHtmlFromLogMessage(raw: string, mode: 'log'): Node;
+export function convertHtmlFromLogMessage(
+	raw: string,
+	mode: 'popup',
+): React.ReactNode;
+export function convertHtmlFromLogMessage(
+	raw: string,
+	mode: 'log' | 'popup',
+): Node | React.ReactNode {
+	switch (mode) {
+		case 'log':
+			return convertHtmlFromLogMessageByLog(raw);
+
+		case 'popup':
+			return convertHtmlFromLogMessageByPopup(raw);
+	}
+}
