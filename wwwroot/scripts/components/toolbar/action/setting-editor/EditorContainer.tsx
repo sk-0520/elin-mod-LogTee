@@ -44,7 +44,6 @@ import {
 	ruleMin,
 	rulesRequired as ruleRequired,
 } from '../../../../utils/forms';
-import { format } from '../../../../utils/language';
 import { parseHighlightSetting } from '../../../../utils/setting';
 import EditorGroup from './EditorGroup';
 import ErrorMessage from './ErrorMessage';
@@ -119,7 +118,7 @@ function parseParsedHighlightSetting(
 				display: a.display,
 				match: a.match,
 				ignoreCase: a.ignoreCase,
-				pattern: a.match === 'regex' ? a.regex.source : a.text,
+				pattern: /*a.match === 'regex' ? a.regex.source :*/ a.text,
 			})),
 		};
 	}
@@ -644,6 +643,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 												control={control}
 												rules={{
 													...ruleRequired(true, language),
+													/*
 													validate: (value) => {
 														if (
 															watch(`highlight.items.${index}.match`) ===
@@ -659,6 +659,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 															}
 														}
 													},
+													*/
 												}}
 												render={({ field, fieldState }) => (
 													<StyledTextField

@@ -6,7 +6,6 @@ import {
 	type ParsedHighlightItemSetting,
 	type ParsedHighlightSetting,
 	type ParsedPlainTextHighlightItemSetting,
-	type ParsedRegexDynamicItemSetting,
 } from '../types/highlight';
 import { getLogElement } from './dom';
 
@@ -21,15 +20,15 @@ export function applyFrontendSetting(
 function parsedHighlightItem(
 	item: HighlightSettingItem,
 ): ParsedHighlightItemSetting {
-	if (item.match === 'regex') {
-		return {
-			id: crypto.randomUUID(),
-			display: item.display,
-			match: item.match,
-			ignoreCase: item.ignoreCase,
-			regex: new RegExp(item.pattern, item.ignoreCase ? 'i' : ''),
-		} satisfies ParsedRegexDynamicItemSetting;
-	}
+	// if (item.match === 'regex') {
+	// 	return {
+	// 		id: crypto.randomUUID(),
+	// 		display: item.display,
+	// 		match: item.match,
+	// 		ignoreCase: item.ignoreCase,
+	// 		regex: new RegExp(item.pattern, item.ignoreCase ? 'i' : ''),
+	// 	} satisfies ParsedRegexDynamicItemSetting;
+	// }
 
 	return {
 		id: crypto.randomUUID(),

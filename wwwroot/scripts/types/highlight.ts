@@ -8,7 +8,7 @@ export const HighlightMatchSchema = z.enum([
 	'startsWith',
 	'endsWith',
 	'equals',
-	'regex',
+	//'regex',
 ]);
 export type HighlightMatch = z.infer<typeof HighlightMatchSchema>;
 
@@ -61,9 +61,8 @@ export interface ParsedRegexDynamicItemSetting extends ParsedItemSetting {
 	regex: RegExp;
 }
 
-export type ParsedHighlightItemSetting =
-	| ParsedPlainTextHighlightItemSetting
-	| ParsedRegexDynamicItemSetting;
+export type ParsedHighlightItemSetting = ParsedPlainTextHighlightItemSetting;
+/* | ParsedRegexDynamicItemSetting */
 
 export interface ParsedHighlightSetting {
 	popup: HighlightPopupSetting;
