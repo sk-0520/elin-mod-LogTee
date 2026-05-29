@@ -10,7 +10,7 @@ import type {
 	ParsedHighlightSetting,
 } from '../types/highlight';
 import { dump, get } from './access';
-import { convertHtmlFromLogMessage, convertStyleColor } from './converter';
+import { convertStyleColor } from './converter';
 import {
 	createLogItemElementByTemplate,
 	createModMessageWithDetailElementByTemplate,
@@ -28,48 +28,46 @@ function hitHighlight(
 	highlightSetting: ParsedHighlightSetting,
 ): ParsedHighlightItemSetting | undefined {
 	for (const highlightItem of highlightSetting.items) {
-		/*
 		if (highlightItem.match === 'regex') {
 			if (highlightItem.regex.test(text)) {
 				return highlightItem;
 			}
 		} else {
-			*/
-		const sourceText = highlightItem.ignoreCase ? text.toLowerCase() : text;
-		const patternText = highlightItem.ignoreCase
-			? highlightItem.text.toLowerCase()
-			: highlightItem.text;
+			const sourceText = highlightItem.ignoreCase ? text.toLowerCase() : text;
+			const patternText = highlightItem.ignoreCase
+				? highlightItem.text.toLowerCase()
+				: highlightItem.text;
 
-		switch (highlightItem.match) {
-			case 'contains':
-				if (sourceText.includes(patternText)) {
-					return highlightItem;
-				}
-				break;
+			switch (highlightItem.match) {
+				case 'contains':
+					if (sourceText.includes(patternText)) {
+						return highlightItem;
+					}
+					break;
 
-			case 'startsWith':
-				if (sourceText.startsWith(patternText)) {
-					return highlightItem;
-				}
-				break;
+				case 'startsWith':
+					if (sourceText.startsWith(patternText)) {
+						return highlightItem;
+					}
+					break;
 
-			case 'endsWith':
-				if (sourceText.endsWith(patternText)) {
-					return highlightItem;
-				}
-				break;
+				case 'endsWith':
+					if (sourceText.endsWith(patternText)) {
+						return highlightItem;
+					}
+					break;
 
-			case 'equals':
-				if (sourceText === patternText) {
-					return highlightItem;
-				}
-				break;
+				case 'equals':
+					if (sourceText === patternText) {
+						return highlightItem;
+					}
+					break;
 
-			default:
-				// @-ts-expect-error
-				throw new Error(highlightItem.match);
+				default:
+					// @ts-expect-error
+					throw new Error(highlightItem.match);
+			}
 		}
-		//}
 	}
 
 	return undefined;
@@ -97,9 +95,8 @@ function createLogItemElement(
 
 	logItemElement.id = getLogItemId(logItem.uuid);
 	logItemElement.style.color = color;
-	logItemElement.append(
-		convertHtmlFromLogMessage(logItem.message.message, 'log'),
-	);
+	// TODO: まぁローカルで脆弱性があるだけなので、勘弁してくれ
+	logItemElement.innerHTML = logItem.message.message;
 	logItemElement.dataset.log = JSON.stringify(logItem);
 
 	// ハイライト

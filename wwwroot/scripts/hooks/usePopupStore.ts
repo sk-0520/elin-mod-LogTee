@@ -7,7 +7,6 @@ import {
 
 type TimeoutId = ReturnType<typeof setTimeout>;
 const DisableAutoCloseTimeout = 0 as unknown as TimeoutId;
-const IntervalTime = 100; // 60fps に近づけるなら 1000 / 60 を設定。
 
 export interface PopupState {
 	setting: HighlightPopupSetting;
@@ -56,7 +55,7 @@ export const usePopupStore = create<PopupStore>()((set, get) => {
 					autoCloseProgressTimeoutId: autoCloseProgressTimeoutId,
 				});
 			}
-		}, IntervalTime);
+		}, 100);
 
 		return setTimeout(() => {
 			set({

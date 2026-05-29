@@ -18,11 +18,7 @@ const PopupDetail: FC = () => {
 		>
 			<PopupHeader />
 
-			<Stack
-				direction="column"
-				spacing={1}
-				sx={{ mb: 1, maxWidth: '50vw', overflow: 'auto', maxHeight: '80vh' }}
-			>
+			<Stack direction="column" spacing={1} sx={{ mb: 1, maxWidth: '50vw' }}>
 				{logs.map((a) => (
 					<PopupLogItem key={a.uuid} log={a} />
 				))}
