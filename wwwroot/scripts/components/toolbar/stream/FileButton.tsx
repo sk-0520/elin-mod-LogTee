@@ -20,7 +20,6 @@ const FileButton: FC<FileButtonProps> = (props) => {
 	const setReceiver = useStreamStore((a) => a.setReceiver);
 	const setMode = useModeStore((a) => a.setMode);
 	const language = useLanguageStore((a) => a.language);
-	const getText = useLanguageStore((a) => a.getText);
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 	const mode = useModeStore((a) => a.mode);
 	const frontendSetting = useFrontendSettingStore((a) => a.setting);
@@ -85,7 +84,7 @@ const FileButton: FC<FileButtonProps> = (props) => {
 				}
 			}}
 		>
-			{getText('stream.file')}
+			{language['stream.file']}
 		</Button>
 	);
 };

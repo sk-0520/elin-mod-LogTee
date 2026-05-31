@@ -18,7 +18,7 @@ const StyledDialogActionButton = styled(Button)({
 
 const ResetButton: FC = () => {
 	const [openDialog, setOpenDialog] = useState(false);
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 	const setError = useErrorNotifyStore((a) => a.setError);
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 
@@ -31,10 +31,10 @@ const ResetButton: FC = () => {
 					setOpenDialog(true);
 				}}
 			>
-				{getText('setting.editor.reset')}
+				{language['setting.editor.reset']}
 			</Button>
 			<Dialog fullWidth open={openDialog} onClose={() => setOpenDialog(false)}>
-				<DialogTitle>{getText('setting.reset.confirm')}</DialogTitle>
+				<DialogTitle>{language['setting.reset.confirm']}</DialogTitle>
 				<DialogContent sx={{ display: 'flex', justifyContent: 'space-around' }}>
 					<StyledDialogActionButton
 						variant="contained"
@@ -53,14 +53,14 @@ const ResetButton: FC = () => {
 							}
 						}}
 					>
-						{getText('setting.reset.submit')}
+						{language['setting.reset.submit']}
 					</StyledDialogActionButton>
 					<StyledDialogActionButton
 						variant="contained"
 						color="secondary"
 						onClick={() => setOpenDialog(false)}
 					>
-						{getText('setting.reset.cancel')}
+						{language['setting.reset.cancel']}
 					</StyledDialogActionButton>
 				</DialogContent>
 			</Dialog>

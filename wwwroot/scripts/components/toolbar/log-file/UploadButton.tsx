@@ -25,7 +25,6 @@ const VisuallyHiddenInput = styled('input')({
 const UploadButton: FC = () => {
 	const close = useStreamStore((a) => a.close);
 	const setMode = useModeStore((a) => a.setMode);
-	const getText = useLanguageStore((a) => a.getText);
 	const language = useLanguageStore((a) => a.language);
 	const mode = useModeStore((a) => a.mode);
 	const highlightSetting = useFrontendSettingStore((a) => a.highlight);
@@ -36,7 +35,7 @@ const UploadButton: FC = () => {
 			startIcon={<UploadFileIcon />}
 			variant={mode === 'upload' ? 'contained' : undefined}
 		>
-			{getText('log-file.upload')}
+			{language['log-file.upload']}
 			<VisuallyHiddenInput
 				type="file"
 				tabIndex={-1}

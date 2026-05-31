@@ -62,11 +62,11 @@ interface ResetProps {
 
 const ResetIcon: FC<ResetProps> = (props) => {
 	const { onReset, resetPosition } = props;
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 
 	return (
 		<InputAdornment position={resetPosition ?? 'end'}>
-			<Tooltip title={getText('setting.editor.reset.title')}>
+			<Tooltip title={language['setting.editor.reset.title']}>
 				<IconButton onClick={onReset}>
 					<RestartAltIcon />
 				</IconButton>
@@ -199,7 +199,6 @@ export interface EditorContainerProps {
 const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const { setting, onCancel } = props;
 	const language = useLanguageStore((a) => a.language);
-	const getText = useLanguageStore((a) => a.getText);
 	const setError = useErrorNotifyStore((a) => a.setError);
 	const { control, watch, handleSubmit } = useForm<SettingFormData>({
 		defaultValues: {
@@ -268,15 +267,15 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 
 	return (
 		<>
-			<DialogTitle>{getText('setting.editor.title')}</DialogTitle>
+			<DialogTitle>{language['setting.editor.title']}</DialogTitle>
 			<DialogContent>
 				<Typography align="center" color="warning">
-					{getText('setting.apply.warning')}
+					{language['setting.apply.warning']}
 				</Typography>
 				<FormControl fullWidth>
 					<Box>
 						<Container>
-							<EditorGroup title={getText('setting.editor.logBuffer.title')}>
+							<EditorGroup title={language['setting.editor.logBuffer.title']}>
 								<Controller
 									name="logBuffer.capacity"
 									control={control}
@@ -288,7 +287,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.logBuffer.capacity')}
+											label={language['setting.editor.logBuffer.capacity']}
 											onReset={() =>
 												field.onChange(props.default.logBuffer.capacity)
 											}
@@ -309,7 +308,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.logBuffer.logFlushLimit')}
+											label={language['setting.editor.logBuffer.logFlushLimit']}
 											onReset={() =>
 												field.onChange(props.default.logBuffer.logFlushLimit)
 											}
@@ -333,9 +332,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText(
-												'setting.editor.logBuffer.logFlushInterval',
-											)}
+											label={
+												language['setting.editor.logBuffer.logFlushInterval']
+											}
 											onReset={() =>
 												field.onChange(props.default.logBuffer.logFlushInterval)
 											}
@@ -346,11 +345,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								/>
 
 								<SettingDescription>
-									{getText('setting.editor.logBuffer.description')}
+									{language['setting.editor.logBuffer.description']}
 								</SettingDescription>
 							</EditorGroup>
 
-							<EditorGroup title={getText('setting.editor.logFile.title')}>
+							<EditorGroup title={language['setting.editor.logFile.title']}>
 								<Controller
 									name="logFile.isEnabled"
 									control={control}
@@ -359,7 +358,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											control={
 												<StyledCheckbox {...field} checked={field.value} />
 											}
-											label={getText('setting.editor.logFile.isEnabled')}
+											label={language['setting.editor.logFile.isEnabled']}
 										/>
 									)}
 								/>
@@ -373,7 +372,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledTextField
 											{...field}
-											label={getText('setting.editor.logFile.filePath')}
+											label={language['setting.editor.logFile.filePath']}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -381,11 +380,13 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								/>
 
 								<SettingDescription>
-									{getText('setting.editor.logFile.description')}
+									{language['setting.editor.logFile.description']}
 								</SettingDescription>
 							</EditorGroup>
 
-							<EditorGroup title={getText('setting.editor.socketClient.title')}>
+							<EditorGroup
+								title={language['setting.editor.socketClient.title']}
+							>
 								<Controller
 									name="socketClient.isEnabled"
 									control={control}
@@ -394,7 +395,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											control={
 												<StyledCheckbox {...field} checked={field.value} />
 											}
-											label={getText('setting.editor.socketClient.isEnabled')}
+											label={language['setting.editor.socketClient.isEnabled']}
 										/>
 									)}
 								/>
@@ -408,7 +409,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledTextField
 											{...field}
-											label={getText('setting.editor.socketClient.hostName')}
+											label={language['setting.editor.socketClient.hostName']}
 											onReset={() =>
 												field.onChange(props.default.socketClient.hostName)
 											}
@@ -429,7 +430,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.socketClient.port')}
+											label={language['setting.editor.socketClient.port']}
 											onReset={() =>
 												field.onChange(props.default.socketClient.port)
 											}
@@ -440,11 +441,13 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								/>
 
 								<SettingDescription>
-									{getText('setting.editor.socketClient.description')}
+									{language['setting.editor.socketClient.description']}
 								</SettingDescription>
 							</EditorGroup>
 
-							<EditorGroup title={getText('setting.editor.socketServer.title')}>
+							<EditorGroup
+								title={language['setting.editor.socketServer.title']}
+							>
 								<Controller
 									name="socketServer.isEnabled"
 									control={control}
@@ -453,7 +456,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											control={
 												<StyledCheckbox {...field} checked={field.value} />
 											}
-											label={getText('setting.editor.socketServer.isEnabled')}
+											label={language['setting.editor.socketServer.isEnabled']}
 										/>
 									)}
 								/>
@@ -468,7 +471,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.socketServer.port')}
+											label={language['setting.editor.socketServer.port']}
 											onReset={() =>
 												field.onChange(props.default.socketServer.port)
 											}
@@ -489,7 +492,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.socketServer.capacity')}
+											label={language['setting.editor.socketServer.capacity']}
 											onReset={() =>
 												field.onChange(props.default.socketServer.capacity)
 											}
@@ -500,11 +503,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								/>
 
 								<SettingDescription>
-									{getText('setting.editor.socketServer.description')}
+									{language['setting.editor.socketServer.description']}
 								</SettingDescription>
 							</EditorGroup>
 
-							<EditorGroup title={getText('setting.editor.webServer.title')}>
+							<EditorGroup title={language['setting.editor.webServer.title']}>
 								<Controller
 									name="webServer.isEnabled"
 									control={control}
@@ -513,7 +516,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											control={
 												<StyledCheckbox {...field} checked={field.value} />
 											}
-											label={getText('setting.editor.webServer.isEnabled')}
+											label={language['setting.editor.webServer.isEnabled']}
 										/>
 									)}
 								/>
@@ -528,7 +531,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.webServer.port')}
+											label={language['setting.editor.webServer.port']}
 											onReset={() =>
 												field.onChange(props.default.webServer.port)
 											}
@@ -546,25 +549,27 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											control={
 												<StyledCheckbox {...field} checked={field.value} />
 											}
-											label={getText(
-												'setting.editor.webServer.openBrowserOnStartup',
-											)}
+											label={
+												language[
+													'setting.editor.webServer.openBrowserOnStartup'
+												]
+											}
 										/>
 									)}
 								/>
 
 								<SettingDescription>
-									{getText('setting.editor.webServer.description')}
+									{language['setting.editor.webServer.description']}
 								</SettingDescription>
 							</EditorGroup>
-							<EditorGroup title={getText('setting.editor.frontend.title')}>
+							<EditorGroup title={language['setting.editor.frontend.title']}>
 								<Controller
 									name="frontend.cssFontFamily"
 									control={control}
 									render={({ field, fieldState }) => (
 										<StyledTextField
 											{...field}
-											label={getText('setting.editor.frontend.cssFontFamily')}
+											label={language['setting.editor.frontend.cssFontFamily']}
 											onReset={() =>
 												field.onChange(props.default.frontend.cssFontFamily)
 											}
@@ -581,7 +586,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledTextField
 											{...field}
-											label={getText('setting.editor.frontend.cssFontSize')}
+											label={language['setting.editor.frontend.cssFontSize']}
 											onReset={() =>
 												field.onChange(props.default.frontend.cssFontSize)
 											}
@@ -602,7 +607,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
-											label={getText('setting.editor.frontend.elementLimit')}
+											label={language['setting.editor.frontend.elementLimit']}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 											onReset={() =>
@@ -613,12 +618,12 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 								/>
 
 								<EditorGroup
-									title={getText('setting.editor.frontend.highlight.title')}
+									title={language['setting.editor.frontend.highlight.title']}
 								>
 									<EditorGroup
-										title={getText(
-											'setting.editor.frontend.highlight.popup.title',
-										)}
+										title={
+											language['setting.editor.frontend.highlight.popup.title']
+										}
 									>
 										<Controller
 											name="highlight.popup.limit"
@@ -631,9 +636,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											render={({ field, fieldState }) => (
 												<StyledNumberTextField
 													{...field}
-													label={getText(
-														'setting.editor.frontend.highlight.popup.limit.title',
-													)}
+													label={
+														language[
+															'setting.editor.frontend.highlight.popup.limit.title'
+														]
+													}
 													onReset={() =>
 														field.onChange(DefaultHighlightPopupSetting.limit)
 													}
@@ -651,9 +658,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 													control={
 														<StyledCheckbox {...field} checked={field.value} />
 													}
-													label={getText(
-														'setting.editor.frontend.highlight.popup.autoClose.title',
-													)}
+													label={
+														language[
+															'setting.editor.frontend.highlight.popup.autoClose.title'
+														]
+													}
 												/>
 											)}
 										/>
@@ -672,9 +681,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											render={({ field, fieldState }) => (
 												<StyledNumberTextField
 													{...field}
-													label={getText(
-														'setting.editor.frontend.highlight.popup.autoCloseDelay.title',
-													)}
+													label={
+														language[
+															'setting.editor.frontend.highlight.popup.autoCloseDelay.title'
+														]
+													}
 													onReset={() =>
 														field.onChange(
 															DefaultHighlightPopupSetting.autoCloseDelay,
@@ -691,7 +702,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										startIcon={<AddIcon />}
 										onClick={() => handleAddNewHighlightItem('head')}
 									>
-										{getText('setting.editor.frontend.highlight.addItem')}
+										{language['setting.editor.frontend.highlight.addItem']}
 									</Button>
 
 									{watch('highlight.items').map((a, index) => (
@@ -702,16 +713,20 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 												render={({ field }) => (
 													<StyledSelect
 														{...field}
-														label={getText(
-															'setting.editor.frontend.highlight.item.display.title',
-														)}
+														label={
+															language[
+																'setting.editor.frontend.highlight.item.display.title'
+															]
+														}
 														labelId="setting.editor.frontend.highlight.item.display.title"
 													>
 														{HighlightDisplaySchema.options.map((b) => (
 															<MenuItem key={b} value={b}>
-																{getText(
-																	`setting.editor.frontend.highlight.item.display.enum.${b}`,
-																)}
+																{
+																	language[
+																		`setting.editor.frontend.highlight.item.display.enum.${b}`
+																	]
+																}
 															</MenuItem>
 														))}
 													</StyledSelect>
@@ -724,16 +739,20 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 												render={({ field }) => (
 													<StyledSelect
 														{...field}
-														label={getText(
-															'setting.editor.frontend.highlight.item.match.title',
-														)}
+														label={
+															language[
+																'setting.editor.frontend.highlight.item.match.title'
+															]
+														}
 														labelId="setting.editor.frontend.highlight.item.match.title"
 													>
 														{HighlightMatchSchema.options.map((b) => (
 															<MenuItem key={b} value={b}>
-																{getText(
-																	`setting.editor.frontend.highlight.item.match.enum.${b}`,
-																)}
+																{
+																	language[
+																		`setting.editor.frontend.highlight.item.match.enum.${b}`
+																	]
+																}
 															</MenuItem>
 														))}
 													</StyledSelect>
@@ -754,7 +773,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 																new RegExp(value);
 															} catch (ex) {
 																return format(
-																	getText('validation.regex.format'),
+																	language['validation.regex.format'],
 																	{ VALUE: (ex as Error).message },
 																);
 															}
@@ -764,9 +783,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 												render={({ field, fieldState }) => (
 													<StyledTextField
 														{...field}
-														label={getText(
-															'setting.editor.frontend.highlight.item.pattern.title',
-														)}
+														label={
+															language[
+																'setting.editor.frontend.highlight.item.pattern.title'
+															]
+														}
 														error={!!fieldState.error}
 														helperText={
 															<ErrorMessage fieldState={fieldState} />
@@ -786,9 +807,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 																checked={field.value}
 															/>
 														}
-														label={getText(
-															'setting.editor.frontend.highlight.item.ignoreCase.title',
-														)}
+														label={
+															language[
+																'setting.editor.frontend.highlight.item.ignoreCase.title'
+															]
+														}
 													/>
 												)}
 											/>
@@ -832,12 +855,12 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											startIcon={<AddIcon />}
 											onClick={() => handleAddNewHighlightItem('tail')}
 										>
-											{getText('setting.editor.frontend.highlight.addItem')}
+											{language['setting.editor.frontend.highlight.addItem']}
 										</Button>
 									)}
 
 									<SettingDescription>
-										{getText('setting.editor.frontend.highlight.description')}
+										{language['setting.editor.frontend.highlight.description']}
 									</SettingDescription>
 								</EditorGroup>
 							</EditorGroup>
@@ -858,7 +881,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 						sx={{ flex: 1, marginRight: '1em' }}
 						onClick={handleSubmit(onSubmit)}
 					>
-						{getText('setting.editor.save')}
+						{language['setting.editor.save']}
 					</Button>
 
 					<Button
@@ -867,7 +890,7 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 						sx={{ flex: 1 }}
 						onClick={onCancel}
 					>
-						{getText('setting.editor.cancel')}
+						{language['setting.editor.cancel']}
 					</Button>
 				</Box>
 			</DialogActions>

@@ -12,8 +12,8 @@ import StreamContainer from './stream/StreamContainer';
 import ToolbarGroup from './ToolbarGroup';
 
 export const ToolbarContainer: FC = () => {
-	const setLanguage = useLanguageStore((a) => a.setLanguage); // for re-render when language changes
-	const getText = useLanguageStore((a) => a.getText); // for re-render when language changes
+	const setLanguage = useLanguageStore((a) => a.setLanguage);
+	const language = useLanguageStore((a) => a.language);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: 初回実行
 	useEffect(() => {
@@ -44,13 +44,13 @@ export const ToolbarContainer: FC = () => {
 				alignItems: 'stretch',
 			}}
 		>
-			<ToolbarGroup title={getText('stream.title')}>
+			<ToolbarGroup title={language['stream.title']}>
 				<StreamContainer />
 			</ToolbarGroup>
-			<ToolbarGroup title={getText('log-file.title')}>
+			<ToolbarGroup title={language['log-file.title']}>
 				<LogFileContainer />
 			</ToolbarGroup>
-			<ToolbarGroup title={getText('action.title')}>
+			<ToolbarGroup title={language['action.title']}>
 				<ActionContainer />
 			</ToolbarGroup>
 			{/* TODO: このあたりの処理しらんわ, とりあえず動く処理にしたうえで対応策は調べて実装する */}

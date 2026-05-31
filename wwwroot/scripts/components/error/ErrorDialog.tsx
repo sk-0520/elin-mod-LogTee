@@ -13,7 +13,7 @@ import { useLanguageStore } from '../../hooks/useLanguageStore';
 
 const ErrorDialog: FC = () => {
 	const errorNotifyStore = useErrorNotifyStore();
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 
 	const handleClose = () => {
 		errorNotifyStore.clearError();
@@ -21,7 +21,7 @@ const ErrorDialog: FC = () => {
 
 	return (
 		<Dialog open={errorNotifyStore.hasError} onClose={handleClose}>
-			<DialogTitle>{getText('error-dialog.title')}</DialogTitle>
+			<DialogTitle>{language['error-dialog.title']}</DialogTitle>
 			<DialogContent>
 				<Typography>{errorNotifyStore.message}</Typography>
 				{errorNotifyStore.details && (
@@ -29,7 +29,7 @@ const ErrorDialog: FC = () => {
 				)}
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleClose}>{getText('error-dialog.close')}</Button>
+				<Button onClick={handleClose}>{language['error-dialog.close']}</Button>
 			</DialogActions>
 		</Dialog>
 	);

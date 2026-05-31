@@ -9,12 +9,12 @@ export interface SettingDescriptionProps {
 
 const SettingDescription: FC<SettingDescriptionProps> = (props) => {
 	const { children } = props;
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 
 	return (
 		<Accordion>
 			<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-				{getText('setting.editor.description.title')}
+				{language['setting.editor.description.title']}
 			</AccordionSummary>
 			<AccordionDetails>{children}</AccordionDetails>
 		</Accordion>

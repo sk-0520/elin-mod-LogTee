@@ -18,7 +18,6 @@ const SocketButton: FC<SocketButtonProps> = (props) => {
 	const setReceiver = useStreamStore((a) => a.setReceiver);
 	const setMode = useModeStore((a) => a.setMode);
 	const language = useLanguageStore((a) => a.language);
-	const getText = useLanguageStore((a) => a.getText);
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 	const mode = useModeStore((a) => a.mode);
 	const frontendSetting = useFrontendSettingStore((a) => a.setting);
@@ -65,7 +64,7 @@ const SocketButton: FC<SocketButtonProps> = (props) => {
 				}
 			}}
 		>
-			{getText('stream.socket')}
+			{language['stream.socket']}
 		</Button>
 	);
 };

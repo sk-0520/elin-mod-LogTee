@@ -10,7 +10,7 @@ export interface ClearButtonProps {
 
 const ClearButton: FC<ClearButtonProps> = (props) => {
 	const { sx } = props;
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 
 	return (
 		<Button
@@ -20,7 +20,7 @@ const ClearButton: FC<ClearButtonProps> = (props) => {
 				clearLog();
 			}}
 		>
-			{getText('action.clear')}
+			{language['action.clear']}
 		</Button>
 	);
 };

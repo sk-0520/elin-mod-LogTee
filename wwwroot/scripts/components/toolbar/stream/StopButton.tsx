@@ -13,7 +13,7 @@ const StopButton: FC<StopButtonProps> = (props) => {
 	const { sx } = props;
 	const close = useStreamStore((a) => a.close);
 	const setMode = useModeStore((a) => a.setMode);
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 
 	return (
 		<Button
@@ -24,7 +24,7 @@ const StopButton: FC<StopButtonProps> = (props) => {
 				setMode('none');
 			}}
 		>
-			{getText('stream.stop')}
+			{language['stream.stop']}
 		</Button>
 	);
 };

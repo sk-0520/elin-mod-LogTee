@@ -13,7 +13,7 @@ export interface SettingEditorButtonProps {
 }
 const SettingEditorButton: FC<SettingEditorButtonProps> = (props) => {
 	const { sx } = props;
-	const getText = useLanguageStore((a) => a.getText);
+	const language = useLanguageStore((a) => a.language);
 	const setError = useErrorNotifyStore((a) => a.setError);
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 	const [open, setOpen] = useState(false);
@@ -43,7 +43,7 @@ const SettingEditorButton: FC<SettingEditorButtonProps> = (props) => {
 					}
 				}}
 			>
-				{getText('action.setting-editor')}
+				{language['action.setting-editor']}
 			</Button>
 			<Dialog fullWidth open={open} onClose={handleCancel}>
 				{setting && (
