@@ -2,6 +2,7 @@ import AddIcon from '@mui/icons-material/Add';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import {
 	Box,
 	Button,
@@ -14,12 +15,14 @@ import {
 	FormControl,
 	FormControlLabel,
 	IconButton,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
 	Select,
 	type SelectProps,
 	TextField,
 	type TextFieldProps,
+	Tooltip,
 	Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -52,9 +55,58 @@ import ErrorMessage from './ErrorMessage';
 import ResetButton from './ResetButton';
 import SettingDescription from './SettingDescription';
 
-const StyledTextField = styled((props: TextFieldProps) => (
-	<TextField {...props} size="small" />
-))((_) => ({}));
+interface ResetProps {
+	onReset?: () => void;
+	resetPosition?: 'start' | 'end';
+}
+
+const ResetIcon: FC<ResetProps> = (props) => {
+	const { onReset, resetPosition } = props;
+	const getText = useLanguageStore((a) => a.getText);
+
+	return (
+		<InputAdornment position={resetPosition ?? 'end'}>
+			<Tooltip title={getText('setting.editor.reset.title')}>
+				<IconButton onClick={onReset}>
+					<RestartAltIcon />
+				</IconButton>
+			</Tooltip>
+		</InputAdornment>
+	);
+};
+
+const StyledTextField = styled((props: TextFieldProps & ResetProps) => {
+	const { onReset, resetPosition, ...originProps } = props;
+
+	return (
+		<TextField
+			{...originProps}
+			slotProps={
+				onReset
+					? {
+							input: {
+								startAdornment:
+									resetPosition === 'start' ? (
+										<ResetIcon
+											onReset={onReset}
+											resetPosition={resetPosition}
+										/>
+									) : undefined,
+								endAdornment:
+									resetPosition === 'end' || resetPosition === undefined ? (
+										<ResetIcon
+											onReset={onReset}
+											resetPosition={resetPosition}
+										/>
+									) : undefined,
+							},
+						}
+					: undefined
+			}
+			size="small"
+		/>
+	);
+})((_) => ({}));
 
 interface ControllerRenderProps {
 	onChange: (...event: unknown[]) => void;
@@ -62,17 +114,21 @@ interface ControllerRenderProps {
 }
 
 const StyledNumberTextField = styled(
-	(props: TextFieldProps & ControllerRenderProps) => (
-		<StyledTextField
-			{...props}
-			type="number"
-			onChange={(e) => {
-				const v = e.target.value;
-				const v2 = Number(v);
-				props.onChange(v2);
-			}}
-		/>
-	),
+	(props: TextFieldProps & ControllerRenderProps & ResetProps) => {
+		const { resetPosition, ...originProps } = props;
+		return (
+			<StyledTextField
+				{...originProps}
+				type="number"
+				resetPosition={resetPosition ?? 'start'}
+				onChange={(e) => {
+					const v = e.target.value;
+					const v2 = Number(v);
+					props.onChange(v2);
+				}}
+			/>
+		);
+	},
 )((_) => ({
 	input: {
 		textAlign: 'right',
@@ -107,6 +163,9 @@ const ValidationRules = {
 	portMax: 65535,
 } as const;
 
+const DefaultHighlightPopupSetting =
+	HighlightPopupSettingSchema.parse(undefined);
+
 function parseParsedHighlightSetting(
 	rawHighlight: string,
 ): SettingFormData['highlight'] {
@@ -126,13 +185,14 @@ function parseParsedHighlightSetting(
 	}
 
 	return {
-		popup: HighlightPopupSettingSchema.parse(undefined),
+		popup: DefaultHighlightPopupSetting,
 		items: [],
 	};
 }
 
 export interface EditorContainerProps {
 	setting: Setting;
+	default: Setting;
 	onCancel: () => void;
 }
 
@@ -229,6 +289,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledNumberTextField
 											{...field}
 											label={getText('setting.editor.logBuffer.capacity')}
+											onReset={() =>
+												field.onChange(props.default.logBuffer.capacity)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -240,16 +303,16 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 									control={control}
 									rules={{
 										...ruleRequired(true, language),
-										...ruleMin(
-											Math.max(watch('logBuffer.capacity'), 1),
-											language,
-										),
+										...ruleMin(1, language),
 										...ruleMax(ValidationRules.intMax, language),
 									}}
 									render={({ field, fieldState }) => (
 										<StyledNumberTextField
 											{...field}
 											label={getText('setting.editor.logBuffer.logFlushLimit')}
+											onReset={() =>
+												field.onChange(props.default.logBuffer.logFlushLimit)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -273,6 +336,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											label={getText(
 												'setting.editor.logBuffer.logFlushInterval',
 											)}
+											onReset={() =>
+												field.onChange(props.default.logBuffer.logFlushInterval)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -343,6 +409,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledTextField
 											{...field}
 											label={getText('setting.editor.socketClient.hostName')}
+											onReset={() =>
+												field.onChange(props.default.socketClient.hostName)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -361,6 +430,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledNumberTextField
 											{...field}
 											label={getText('setting.editor.socketClient.port')}
+											onReset={() =>
+												field.onChange(props.default.socketClient.port)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -397,6 +469,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledNumberTextField
 											{...field}
 											label={getText('setting.editor.socketServer.port')}
+											onReset={() =>
+												field.onChange(props.default.socketServer.port)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -415,6 +490,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledNumberTextField
 											{...field}
 											label={getText('setting.editor.socketServer.capacity')}
+											onReset={() =>
+												field.onChange(props.default.socketServer.capacity)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -451,6 +529,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledNumberTextField
 											{...field}
 											label={getText('setting.editor.webServer.port')}
+											onReset={() =>
+												field.onChange(props.default.webServer.port)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -484,6 +565,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledTextField
 											{...field}
 											label={getText('setting.editor.frontend.cssFontFamily')}
+											onReset={() =>
+												field.onChange(props.default.frontend.cssFontFamily)
+											}
 											fullWidth
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
@@ -498,6 +582,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 										<StyledTextField
 											{...field}
 											label={getText('setting.editor.frontend.cssFontSize')}
+											onReset={() =>
+												field.onChange(props.default.frontend.cssFontSize)
+											}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
 										/>
@@ -518,6 +605,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 											label={getText('setting.editor.frontend.elementLimit')}
 											error={!!fieldState.error}
 											helperText={<ErrorMessage fieldState={fieldState} />}
+											onReset={() =>
+												field.onChange(props.default.frontend.elementLimit)
+											}
 										/>
 									)}
 								/>
@@ -544,6 +634,9 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 													label={getText(
 														'setting.editor.frontend.highlight.popup.limit.title',
 													)}
+													onReset={() =>
+														field.onChange(DefaultHighlightPopupSetting.limit)
+													}
 													error={!!fieldState.error}
 													helperText={<ErrorMessage fieldState={fieldState} />}
 												/>
@@ -582,6 +675,11 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 													label={getText(
 														'setting.editor.frontend.highlight.popup.autoCloseDelay.title',
 													)}
+													onReset={() =>
+														field.onChange(
+															DefaultHighlightPopupSetting.autoCloseDelay,
+														)
+													}
 													error={!!fieldState.error}
 													helperText={<ErrorMessage fieldState={fieldState} />}
 												/>

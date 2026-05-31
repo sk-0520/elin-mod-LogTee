@@ -11,7 +11,7 @@ namespace Elin.Plugin.Main.Models.Settings
 
         public LogBufferSetting LogBuffer { get; set; } = new LogBufferSetting()
         {
-            Capacity = 32,
+            Capacity = 64,
             LogFlushLimit = 32,
             LogFlushInterval = 250,
         };

@@ -56,6 +56,7 @@ namespace Elin.Plugin.Main.Models
         private List<LogItem> LogItems { get; }
         private LogItem? LogItem { get; set; }
         private System.Timers.Timer Timer { get; }
+        /// <inheritdoc cref="LogBufferSetting.LogFlushLimit"/>
         private int LogFlushLimit { get; }
         private SocketClient? SocketClient { get; }
         private CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
@@ -146,7 +147,7 @@ namespace Elin.Plugin.Main.Models
                     LogItems.Add(item);
                 }
 
-                shouldFlushNow = LogFlushLimit < LogItems.Count;
+                shouldFlushNow = LogFlushLimit <= LogItems.Count;
             }
 
             if (shouldFlushNow)

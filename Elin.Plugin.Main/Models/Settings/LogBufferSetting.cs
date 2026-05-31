@@ -20,6 +20,9 @@ namespace Elin.Plugin.Main.Models.Settings
         [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.LogBufferSettingCapacity), AllLanguage = true)]
         public virtual int Capacity { get; set; }
 
+        /// <summary>
+        /// ため込んだログがこの値以上になったらログをフラッシュする。
+        /// </summary>
         [GeneratePluginConfigDescription(nameof(PluginLocalizationConfig.LogBufferSettingLogFlushLimit), AllLanguage = true)]
         public virtual int LogFlushLimit { get; set; }
 

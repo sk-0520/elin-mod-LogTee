@@ -17,7 +17,9 @@ const SettingEditorButton: FC<SettingEditorButtonProps> = (props) => {
 	const setError = useErrorNotifyStore((a) => a.setError);
 	const busyBlock = useBusyStore((a) => a.busyBlock);
 	const [open, setOpen] = useState(false);
-	const [setting, setSetting] = useState<Setting | undefined>(undefined);
+	const [setting, setSetting] = useState<
+		{ setting: Setting; default: Setting } | undefined
+	>(undefined);
 
 	const handleCancel = () => {
 		setOpen(false);
@@ -33,7 +35,7 @@ const SettingEditorButton: FC<SettingEditorButtonProps> = (props) => {
 						const settingResult = await busyBlock(
 							async () => await getSetting(),
 						);
-						setSetting(settingResult.setting);
+						setSetting(settingResult);
 						setOpen(true);
 					} catch (error) {
 						setError(error);
@@ -45,7 +47,11 @@ const SettingEditorButton: FC<SettingEditorButtonProps> = (props) => {
 			</Button>
 			<Dialog fullWidth open={open} onClose={handleCancel}>
 				{setting && (
-					<EditorContainer setting={setting} onCancel={handleCancel} />
+					<EditorContainer
+						setting={setting.setting}
+						default={setting.default}
+						onCancel={handleCancel}
+					/>
 				)}
 			</Dialog>
 		</>

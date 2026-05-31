@@ -7,7 +7,7 @@ export interface ErrorMessageProps {
 
 const ErrorMessage: FC<ErrorMessageProps> = (props) => {
 	const { fieldState } = props;
-	return <div style={{ color: 'red' }}>{fieldState?.error?.message}</div>;
+	return fieldState?.error?.message;
 };
 
 export default ErrorMessage;

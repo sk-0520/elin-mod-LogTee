@@ -160,6 +160,7 @@ export type Setting = z.infer<typeof SettingScheme>;
 
 export const SettingResponseScheme = z.object({
 	setting: SettingScheme,
+	default: SettingScheme,
 });
 export type SettingResponse = z.infer<typeof SettingResponseScheme>;
 

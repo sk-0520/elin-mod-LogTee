@@ -130,6 +130,11 @@ const LanguageItems = {
 		en: 'Description',
 		cn: '描述',
 	},
+	'setting.editor.reset.title': {
+		jp: 'リセット',
+		en: 'Reset',
+		cn: '重置',
+	},
 	// logBuffer
 	'setting.editor.logBuffer.title': {
 		jp: 'ログバッファ',

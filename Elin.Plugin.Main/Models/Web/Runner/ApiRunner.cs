@@ -254,6 +254,7 @@ namespace Elin.Plugin.Main.Models.Web.Runner
             var response = new SettingResponse
             {
                 Setting = ModHelper.Plugin.SettingProxy,
+                Default = new Setting(),
             };
             await WriteResponseAsync(context, response, cancellationToken: cancellationToken);
         }
