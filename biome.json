@@ -27,6 +27,6 @@
 		}
 	},
 	"files": {
-		"includes": ["*.ts", "wwwroot/**/*"]
+		"includes": ["*.ts", "wwwroot/**/*", "!wwwroot/index.html"]
 	}
 }

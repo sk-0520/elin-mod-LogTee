@@ -13,8 +13,7 @@ body {
 	/* TODO: 多言語におけるフォント指定を知らない */
 	font-family: /* "Meiryo UI",
     "PingFang TC", "Microsoft JhengHei",
-    "PingFang SC", "Microsoft YaHei", */
-		sans-serif;
+    "PingFang SC", "Microsoft YaHei", */ sans-serif;
 }
 
 .log-container {
