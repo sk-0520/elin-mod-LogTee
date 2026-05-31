@@ -3,6 +3,7 @@ import { defineConfig } from '@rspack/cli';
 import { rspack, type SwcLoaderOptions } from '@rspack/core';
 import PreactRefreshPlugin from '@rspack/plugin-preact-refresh';
 import Dotenv from 'dotenv-webpack';
+import z from 'zod';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -17,6 +18,25 @@ function getEnvPath(): string {
 
 	return envPath;
 }
+
+const PluginDefineSchema = z.object({
+	package: z.object({
+		title: z.string(),
+	}),
+	mod: z.object({
+		version: z.string(),
+	}),
+});
+type PluginDefine = z.infer<typeof PluginDefineSchema>;
+
+function loadPluginDefine(): PluginDefine {
+	const pluginDefineJson = fs.readFileSync('./Plugin.json', 'utf-8');
+	const pluginDefine = JSON.parse(pluginDefineJson);
+
+	return PluginDefineSchema.parse(pluginDefine);
+}
+
+const pluginDefine = loadPluginDefine();
 
 export default defineConfig({
 	mode: isDev ? 'development' : 'production',
@@ -102,6 +122,10 @@ export default defineConfig({
 		isDev && new rspack.HotModuleReplacementPlugin(),
 		new rspack.HtmlRspackPlugin({
 			template: './wwwroot/index.html',
+			templateParameters: {
+				package_title: pluginDefine.package.title,
+				mod_version: pluginDefine.mod.version,
+			},
 		}),
 		new Dotenv({
 			path: getEnvPath(),
