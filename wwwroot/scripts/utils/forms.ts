@@ -1,7 +1,13 @@
 import type { ValidationValueMessage } from 'react-hook-form';
 import { format, type Language } from './language';
 
-export function rulesRequired(
+export const ValidationRules = {
+	intMax: 2147483647,
+	portMin: 0,
+	portMax: 65535,
+} as const;
+
+export function ruleRequired(
 	boolean: boolean,
 	language: Language,
 ): { required: string | false } {

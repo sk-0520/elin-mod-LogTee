@@ -120,12 +120,38 @@ export default defineConfig({
 	plugins: [
 		isDev && new PreactRefreshPlugin({}),
 		isDev && new rspack.HotModuleReplacementPlugin(),
+		new rspack.SwcJsMinimizerRspackPlugin({
+			minimizerOptions: {
+				compress: {
+					pure_funcs: isDev
+						? undefined
+						: [
+								'console.assert',
+								'console.count',
+								'console.countReset',
+								'console.debug',
+								'console.dir',
+								'console.dirxml',
+								'console.group',
+								'console.groupCollapsed',
+								'console.groupEnd',
+								'console.trace',
+								'console.log',
+								'console.table',
+								'console.time',
+								'console.timeEnd',
+								'console.timeLog',
+							],
+				},
+			},
+		}),
 		new rspack.HtmlRspackPlugin({
 			template: './wwwroot/index.html',
 			templateParameters: {
 				package_title: pluginDefine.package.title,
 				mod_version: pluginDefine.mod.version,
 			},
+			minify: !isDev,
 		}),
 		new Dotenv({
 			path: getEnvPath(),

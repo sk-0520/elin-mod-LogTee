@@ -25,7 +25,7 @@ const EditorGroup: FC<EditorGroupProps> = (props) => {
 			<Stack
 				spacing={2}
 				sx={{
-					margin: '0.5em 0 1em 3em',
+					margin: '0.5em 0 0.8em 1.5em',
 				}}
 			>
 				{children}
