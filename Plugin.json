@@ -39,7 +39,7 @@
     ]
   },
   "mod": {
-    "version": "2.0.1",
+    "version": "2.0.2",
     "useDebugId": true,
     "log": "NUL"
   }
