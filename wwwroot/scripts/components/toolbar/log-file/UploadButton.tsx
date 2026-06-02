@@ -34,6 +34,7 @@ const UploadButton: FC = () => {
 			component="label"
 			startIcon={<UploadFileIcon />}
 			variant={mode === 'upload' ? 'contained' : undefined}
+			sx={{ color: mode === 'upload' ? '#fff' : undefined }}
 		>
 			{language['log-file.upload']}
 			<VisuallyHiddenInput

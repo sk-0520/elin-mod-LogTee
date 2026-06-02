@@ -28,7 +28,7 @@ const FileButton: FC<FileButtonProps> = (props) => {
 	return (
 		<Button
 			id="stream-file-command"
-			sx={sx}
+			sx={{ ...sx }}
 			startIcon={<SlideshowIcon />}
 			variant={mode === 'stream-file' ? 'contained' : undefined}
 			onClick={async () => {

@@ -17,7 +17,7 @@ const StopButton: FC<StopButtonProps> = (props) => {
 
 	return (
 		<Button
-			sx={sx}
+			sx={{ ...sx }}
 			startIcon={<StopCircleIcon />}
 			onClick={() => {
 				close();

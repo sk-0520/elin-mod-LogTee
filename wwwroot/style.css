@@ -16,8 +16,13 @@ body {
     "PingFang SC", "Microsoft YaHei", */ sans-serif;
 }
 
+.toolbar {
+	background-color: #e1cfb3;
+	background-image: url("assets/toolbar-background.png");
+}
+
 .log-container {
-	background: #000;
+	background: #31281e;
 	flex: 1 1 100%;
 	overflow: scroll;
 	padding: 1em;

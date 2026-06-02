@@ -2,10 +2,12 @@ import {
 	Box,
 	Button,
 	Container,
+	createTheme,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
 	FormControl,
+	ThemeProvider,
 	Typography,
 } from '@mui/material';
 import { encode } from 'js-base64';
@@ -70,6 +72,21 @@ export interface EditorContainerProps {
 	onCancel: () => void;
 }
 
+const Theme = createTheme({
+	typography: {
+		button: {
+			textTransform: 'none',
+		},
+	},
+	components: {
+		MuiButton: {
+			defaultProps: {
+				variant: 'outlined',
+			},
+		},
+	},
+});
+
 const EditorContainer: FC<EditorContainerProps> = (props) => {
 	const { setting, onCancel } = props;
 	const language = useLanguageStore((a) => a.language);
@@ -105,58 +122,62 @@ const EditorContainer: FC<EditorContainerProps> = (props) => {
 	};
 
 	return (
-		<FormProvider {...{ control, watch, handleSubmit, ...rfh }}>
-			<DialogTitle>{language['setting.editor.title']}</DialogTitle>
-			<DialogContent>
-				<Typography align="center" color="warning">
-					{language['setting.apply.warning']}
-				</Typography>
-				<FormControl fullWidth>
-					<Box>
-						<Container>
-							<LogBufferGroup default={props.default.logBuffer} />
+		<ThemeProvider theme={Theme}>
+			<FormProvider {...{ control, watch, handleSubmit, ...rfh }}>
+				<DialogTitle>{language['setting.editor.title']}</DialogTitle>
+				<DialogContent>
+					<Typography align="center" color="warning">
+						{language['setting.apply.warning']}
+					</Typography>
+					<FormControl fullWidth>
+						<Box>
+							<Container>
+								<LogBufferGroup default={props.default.logBuffer} />
 
-							<LogFileGroup default={props.default.logFile} />
+								<LogFileGroup default={props.default.logFile} />
 
-							<SocketClientGroup default={props.default.socketClient} />
+								<SocketClientGroup default={props.default.socketClient} />
 
-							<SocketServerGroup default={props.default.socketServer} />
+								<SocketServerGroup default={props.default.socketServer} />
 
-							<WebServerGroup default={props.default.webServer} />
+								<WebServerGroup default={props.default.webServer} />
 
-							<FrontendGroup default={props.default.frontend} />
+								<FrontendGroup default={props.default.frontend} />
 
-							{/* <pre>{JSON.stringify(setting, null, 2)}</pre> */}
-						</Container>
+								{/* <pre>{JSON.stringify(setting, null, 2)}</pre> */}
+							</Container>
+						</Box>
+					</FormControl>
+				</DialogContent>
+				<DialogActions
+					sx={{ display: 'flex', justifyContent: 'space-between' }}
+				>
+					<Box sx={{ display: 'flex' }}>
+						<ResetButton />
 					</Box>
-				</FormControl>
-			</DialogContent>
-			<DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-				<Box sx={{ display: 'flex' }}>
-					<ResetButton />
-				</Box>
 
-				<Box sx={{ display: 'flex', width: '50%' }}>
-					<Button
-						variant="contained"
-						color="primary"
-						sx={{ flex: 1, marginRight: '1em' }}
-						onClick={handleSubmit(onSubmit)}
-					>
-						{language['setting.editor.save']}
-					</Button>
+					<Box sx={{ display: 'flex', width: '50%' }}>
+						<Button
+							variant="contained"
+							color="primary"
+							sx={{ flex: 1, marginRight: '1em' }}
+							onClick={handleSubmit(onSubmit)}
+						>
+							{language['setting.editor.save']}
+						</Button>
 
-					<Button
-						variant="contained"
-						color="secondary"
-						sx={{ flex: 1 }}
-						onClick={onCancel}
-					>
-						{language['setting.editor.cancel']}
-					</Button>
-				</Box>
-			</DialogActions>
-		</FormProvider>
+						<Button
+							variant="contained"
+							color="secondary"
+							sx={{ flex: 1 }}
+							onClick={onCancel}
+						>
+							{language['setting.editor.cancel']}
+						</Button>
+					</Box>
+				</DialogActions>
+			</FormProvider>
+		</ThemeProvider>
 	);
 };
 

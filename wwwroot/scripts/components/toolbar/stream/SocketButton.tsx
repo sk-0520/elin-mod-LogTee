@@ -26,7 +26,7 @@ const SocketButton: FC<SocketButtonProps> = (props) => {
 	return (
 		<Button
 			id="stream-socket-command"
-			sx={sx}
+			sx={{ ...sx }}
 			startIcon={<PlayCircleIcon />}
 			variant={mode === 'stream-socket' ? 'contained' : undefined}
 			onClick={async () => {
