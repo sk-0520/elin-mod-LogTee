@@ -1,10 +1,12 @@
+// @ts-expect-error ts(2591)
 import fs from 'node:fs';
 import { defineConfig } from '@rspack/cli';
 import { rspack, type SwcLoaderOptions } from '@rspack/core';
-import PreactRefreshPlugin from '@rspack/plugin-preact-refresh';
+import { PreactRefreshRspackPlugin } from '@rspack/plugin-preact-refresh';
 import Dotenv from 'dotenv-webpack';
 import z from 'zod';
 
+// @ts-expect-error ts(2591)
 const isDev = process.env.NODE_ENV === 'development';
 
 function getEnvPath(): string {
@@ -118,7 +120,7 @@ export default defineConfig({
 		},
 	},
 	plugins: [
-		isDev && new PreactRefreshPlugin({}),
+		isDev && new PreactRefreshRspackPlugin({}),
 		isDev && new rspack.HotModuleReplacementPlugin(),
 		new rspack.SwcJsMinimizerRspackPlugin({
 			minimizerOptions: {
