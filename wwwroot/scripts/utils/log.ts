@@ -129,12 +129,23 @@ function createModMessageElement(
 	kind: ModMessageKind,
 	message: keyof Language,
 	details: object | undefined,
-	_timestamp: Date,
+	timestamp: Date,
 	language: Language,
 ): HTMLElement {
 	const rootElement = details
 		? createModMessageWithDetailElementByTemplate()
 		: createModMessageWithoutDetailElementByTemplate();
+
+	const timestampElement = ensureSelector(
+		rootElement,
+		'.mod-message-timestamp',
+	);
+	if (timestampElement instanceof HTMLTimeElement) {
+		timestampElement.dateTime = timestamp.toISOString();
+		timestampElement.textContent = timestamp.toLocaleString();
+	} else {
+		console.warn('HTMLTimeElement');
+	}
 
 	const messageElement = ensureSelector(rootElement, '.mod-message-message');
 	messageElement.textContent = language[message];
@@ -168,7 +179,7 @@ function addLogItemCore(
 	}
 
 	if (logItem.message.kind === 'Mod') {
-		const modMessage = get(logItem.message.mod); //TODO: 型で非 undefined にできるはずだけど一旦これでいい
+		const modMessage = get(logItem.message.mod); // 通常このパターンでは mod に値が入っているが C# 側との定義とずれるので型で固めない
 		const modMessageElement = createModMessageElement(
 			modMessage.kind,
 			modMessage.messageId,

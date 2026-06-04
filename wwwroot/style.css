@@ -31,8 +31,27 @@ body {
 		overflow: hidden;
 
 		.mod-message {
-			margin: 0.5em;
+			margin: 0.4em;
+			padding: 0 0.25em;
 			border: 1px solid #fff;
+
+			summary {
+				list-style: none;
+				cursor: pointer;
+
+				&::after {
+					content: "...";
+					display: block;
+					float: right;
+				}
+			}
+
+			.mod-message-timestamp {
+				font-size: 0.75em;
+				margin-right: 0.5ch;
+				vertical-align: middle;
+				display: inline-block;
+			}
 		}
 
 		.mod-message-kind-notice {

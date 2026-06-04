@@ -15,7 +15,13 @@ export type Language = {
 };
 
 const FallbackGameLanguage = 'en';
-const GameLanguages = new Set(['jp', 'en', 'cn', 'zhtw', 'kr']);
+const GameLanguages = new Set<keyof LanguageItem>([
+	'jp',
+	'en',
+	'cn',
+	'zhtw',
+	'kr',
+]);
 const NavigatorLanguages = new Map([
 	['ja', 'jp'],
 	['ja-JP', 'jp'],
@@ -58,7 +64,7 @@ export function getLanguageByGameLanguage(gameLanguage: string): Language {
 
 export function getLanguage(gameLanguage: string | undefined): Language {
 	let lang = gameLanguage?.toLowerCase() ?? '';
-	if (!GameLanguages.has(lang)) {
+	if (!GameLanguages.has(lang as keyof LanguageItem)) {
 		const navigatorLanguage = navigator.language.toLowerCase();
 		lang = NavigatorLanguages.get(navigatorLanguage) ?? FallbackGameLanguage;
 	}

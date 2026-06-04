@@ -34,7 +34,7 @@ export const HighlightPopupSettingSchema = z
 	.default({
 		limit: 5,
 		autoClose: true,
-		autoCloseDelay: 60_000,
+		autoCloseDelay: 20_000,
 	});
 export type HighlightPopupSetting = z.infer<typeof HighlightPopupSettingSchema>;
 

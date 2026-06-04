@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%- package_title %>&nbsp;&lt;&nbsp;<%- mod_version %></title>
 </head>
 
@@ -23,13 +24,17 @@
 
     <template id="mod-message-template-without-detail">
         <p class="mod-message mod-message-without-detail">
+            <time class="mod-message-timestamp" datetime="PT0S">[TIMESTAMP]</time>
             <span class="mod-message-message">[MESSAGE]</span>
         </p>
     </template>
 
     <template id="mod-message-template-with-detail">
         <details class="mod-message mod-message-with-detail">
-            <summary class="mod-message-message">[MESSAGE]</summary>
+            <summary>
+                <time class="mod-message-timestamp" datetime="PT0S">[TIMESTAMP]</time>
+                <span class="mod-message-message">[MESSAGE]</span>
+            </summary>
             <pre class="mod-message-detail">[DETAIL]</pre>
         </details>
     </template>
