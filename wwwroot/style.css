@@ -74,6 +74,19 @@ body {
 			margin-left: 0.25ch;
 		}
 
+		.log-item-notify-popup {
+			display: inline-block;
+			border-width: 1px;
+			border-style: dashed;
+			padding: 0.25em 0.5em;
+
+			&::before {
+				content: "💬";
+				margin-right: 0.25em;
+				display: inline-block;
+			}
+		}
+
 		.log-item-highlight-inline {
 			display: inline-block;
 			font-weight: bold;

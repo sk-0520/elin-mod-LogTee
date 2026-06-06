@@ -313,6 +313,11 @@ const LanguageItems = {
 		en: 'Auto Close Delay (msec)',
 		cn: '自动关闭延迟（msec）',
 	},
+	'setting.editor.frontend.highlight.popup.notifyIsOpen.title': {
+		jp: 'ポップアップ通知を表示対象とする',
+		en: 'Include Popup Notifications',
+		cn: '包括弹出通知',
+	},
 
 	'setting.editor.frontend.highlight.addItem': {
 		jp: 'ハイライト項目追加',

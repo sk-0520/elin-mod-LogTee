@@ -94,7 +94,18 @@ function createLogItemElement(
 	const logItemElement = createLogItemElementByTemplate();
 
 	logItemElement.id = getLogItemId(logItem.uuid);
-	logItemElement.style.color = color;
+
+	let shownPopup = false;
+	if (logItem.message.kind === 'Popup' && logItem.message.color) {
+		logItemElement.style.color = convertStyleColor(logItem.message.color);
+		logItemElement.classList.add('log-item-notify-popup');
+		if (highlightSetting.popup.notifyIsOpen) {
+			shownPopup = true;
+			usePopupStore.getState().enqueueLog(logItem);
+		}
+	} else {
+		logItemElement.style.color = color;
+	}
 	logItemElement.append(
 		convertHtmlFromLogMessage(logItem.message.message, 'log'),
 	);
@@ -115,9 +126,11 @@ function createLogItemElement(
 				break;
 
 			case 'popup':
-				logItemElement.classList.add('log-item-highlight-popup');
-				logItemElement.style.borderColor = color;
-				usePopupStore.getState().enqueueLog(logItem);
+				if (!shownPopup) {
+					logItemElement.classList.add('log-item-highlight-popup');
+					logItemElement.style.borderColor = color;
+					usePopupStore.getState().enqueueLog(logItem);
+				}
 				break;
 		}
 	}

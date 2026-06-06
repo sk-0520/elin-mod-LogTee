@@ -46,6 +46,11 @@ namespace Elin.Plugin.Main.Models
             return new MessageItem(MessageKind.MessageWithColor, color, message, default);
         }
 
+        public static MessageItem CreatePopupMessage(string message, MessageColor color)
+        {
+            return new MessageItem(MessageKind.Popup, color, message, default);
+        }
+
         public static MessageItem CreateModMessage(ModMessageKind kind, ModMessageId modMessageId, object? detail)
         {
             return new MessageItem(MessageKind.Mod, default, default, new ModMessage(kind, modMessageId, detail));

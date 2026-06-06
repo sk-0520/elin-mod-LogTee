@@ -29,12 +29,15 @@ export const HighlightPopupSettingSchema = z
 		limit: z.number().nonnegative(),
 		autoClose: z.boolean(),
 		autoCloseDelay: z.number().nonnegative(),
+		/** ポップアップ通知をポップアップ表示するか */
+		notifyIsOpen: z.boolean().default(true), // 二重デフォルトで辛い、ミスった
 	})
 	// ポップアップ設定は後入れなのでデフォルト値を設定
 	.default({
 		limit: 5,
 		autoClose: true,
 		autoCloseDelay: 20_000,
+		notifyIsOpen: true,
 	});
 export type HighlightPopupSetting = z.infer<typeof HighlightPopupSettingSchema>;
 

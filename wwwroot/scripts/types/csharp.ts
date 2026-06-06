@@ -6,6 +6,7 @@ export const MessageKindScheme = z.enum([
 	'Message',
 	'Color',
 	'MessageWithColor',
+	'Popup',
 ]);
 export type MessageKind = z.infer<typeof MessageKindScheme>;
 

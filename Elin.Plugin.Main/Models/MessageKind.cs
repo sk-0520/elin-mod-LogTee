@@ -7,5 +7,6 @@ namespace Elin.Plugin.Main.Models
         Color,
         Message,
         MessageWithColor,
+        Popup,
     }
 }

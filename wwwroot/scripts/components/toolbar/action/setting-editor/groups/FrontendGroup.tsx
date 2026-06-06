@@ -205,6 +205,21 @@ const FrontendGroup: FC<FrontendGroupProps> = (props) => {
 							/>
 						)}
 					/>
+
+					<Controller
+						name="highlight.popup.notifyIsOpen"
+						control={control}
+						render={({ field }) => (
+							<FormControlLabel
+								control={<EditorCheckbox {...field} checked={field.value} />}
+								label={
+									language[
+										'setting.editor.frontend.highlight.popup.notifyIsOpen.title'
+									]
+								}
+							/>
+						)}
+					/>
 				</EditorGroup>
 
 				<Button
